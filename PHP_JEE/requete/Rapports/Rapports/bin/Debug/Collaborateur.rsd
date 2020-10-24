@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <CommandText>SELECT *
+FROM(
+SELECT 0 CO_No,'Tout' CO_Intitule
+UNION
+SELECT CO_No,CO_Nom
+FROM [F_COLLABORATEUR]) A</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="CO_No">
+        <DataField>CO_No</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="CO_Intitule">
+        <DataField>CO_Intitule</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

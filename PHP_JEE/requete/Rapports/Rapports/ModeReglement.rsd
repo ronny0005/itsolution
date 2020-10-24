@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <CommandText>SELECT 0 R_Code,'Tout' R_Intitule
+UNION
+SELECT R_Code,R_Intitule
+FROM P_REGLEMENT
+WHERE R_Intitule&lt;&gt;''</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="R_Code">
+        <DataField>R_Code</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="R_Intitule">
+        <DataField>R_Intitule</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

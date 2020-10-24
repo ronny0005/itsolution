@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@cbMarq">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT A.*,D_Ville
+FROM (
+SELECT DO_Ref
+,A.DO_Piece
+,DO_Date
+,DE_Intitule
+,DE_Adresse
+,DE_EMail
+,DE_Telephone
+,CA_Intitule
+,CT_Intitule
+,DE_Ville
+,DE_CodePostal
+,DE_Complement
+,CO.CO_Nom
+,COE.PROT_User as Vendeur
+,A.DO_Domaine
+,A.DO_Type
+,DO_Coord04
+,DR_Date
+,CASE WHEN A.DO_Domaine = 0 THEN 'Facture de vente' 
+	WHEN A.DO_Domaine = 1 THEN 'Facture d''achat' END NomFacture
+FROM F_DOCENTETE A
+LEFT JOIN F_DOCREGL Dr ON A.DO_Domaine=Dr.DO_Domaine AND A.DO_Type = Dr.DO_Type AND A.DO_Piece = Dr.DO_Piece
+LEFT JOIN (SELECT DO_Domaine,DO_Type,DO_Piece,cbCreateur 
+	FROM F_DOCLIGNE 
+	GROUP BY DO_Domaine,DO_Type,DO_Piece,cbCreateur )DL ON A.DO_Domaine=DL.DO_Domaine AND A.DO_Type = DL.DO_Type AND A.DO_Piece = DL.DO_Piece
+LEFT JOIN F_DEPOT B ON A.DE_No=B.DE_No
+LEFT JOIN F_CAISSE C ON A.CA_No=C.CA_No
+LEFT JOIN F_COMPTET D ON A.DO_Tiers=D.CT_Num
+LEFT JOIN F_COLLABORATEUR CO ON A.CO_No=CO.CO_No
+LEFT JOIN F_PROTECTIONCIAL COE ON DL.cbCreateur=CAST(COE.PROT_No AS VARCHAR(10))
+WHERE A.cbMarq = @cbMarq)A,P_DOSSIER</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="DO_Ref">
+        <DataField>DO_Ref</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DO_Piece">
+        <DataField>DO_Piece</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DO_Date">
+        <DataField>DO_Date</DataField>
+        <rd:TypeName>System.DateTime</rd:TypeName>
+      </Field>
+      <Field Name="DE_Intitule">
+        <DataField>DE_Intitule</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DE_Adresse">
+        <DataField>DE_Adresse</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DE_EMail">
+        <DataField>DE_EMail</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DE_Telephone">
+        <DataField>DE_Telephone</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="CA_Intitule">
+        <DataField>CA_Intitule</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="CT_Intitule">
+        <DataField>CT_Intitule</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DE_Ville">
+        <DataField>DE_Ville</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DE_CodePostal">
+        <DataField>DE_CodePostal</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DE_Complement">
+        <DataField>DE_Complement</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="CO_Nom">
+        <DataField>CO_Nom</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Vendeur">
+        <DataField>Vendeur</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DO_Domaine">
+        <DataField>DO_Domaine</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+      <Field Name="DO_Type">
+        <DataField>DO_Type</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+      <Field Name="DO_Coord04">
+        <DataField>DO_Coord04</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DR_Date">
+        <DataField>DR_Date</DataField>
+        <rd:TypeName>System.DateTime</rd:TypeName>
+      </Field>
+      <Field Name="NomFacture">
+        <DataField>NomFacture</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Ville">
+        <DataField>D_Ville</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@cbMarqP">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>declare @cbMarq AS INT 
+DECLARE @DoDomaine as INT 
+DECLARE @DoType as INT 
+DECLARE @DoPiece as VARCHAR(50)
+SET @cbMarq = @cbMarqP;
+SELECT @DoDomaine= DO_Domaine, @DoType = DO_Type, @DoPiece = DO_Piece
+FROM F_DOCENTETE
+WHERE cbMarq = @cbMarq;
+
+SELECT *,Val_Remise*100/DL_PUTTC/100 PourcRemise
+FROM (
+SELECT DL_PUDevise,CA_Num,DL_TTC, DL_PUTTC,DL_MvtStock,CT_Num,cbMarq,DL_TypeTaux1,DL_TypeTaux2,DL_TypeTaux3,cbCreateur,DL_NoColis
+        ,CASE WHEN DL_TypeTaux1=0 THEN DL_MontantHT*(DL_Taxe1/100) 
+			WHEN DL_TypeTaux1=1 THEN DL_Taxe1*DL_Qte ELSE DL_Taxe1 END MT_Taxe1
+        ,CASE WHEN DL_TypeTaux2=0 THEN DL_MontantHT*(DL_Taxe2/100) 
+			WHEN DL_TypeTaux2=1 THEN DL_Taxe2*DL_Qte ELSE DL_Taxe2 END MT_Taxe2
+        ,CASE WHEN DL_TypeTaux3=0 THEN DL_MontantHT*(DL_Taxe3/100) 
+				WHEN DL_TypeTaux3=1 THEN DL_Taxe3*DL_Qte ELSE DL_Taxe3 END MT_Taxe3
+		,DL_MontantHT,DO_Piece,
+        AR_Ref,DE_No,DL_CMUP AS AR_PrixAch,DL_Design
+		,DL_Qte,DL_PrixUnitaire,DL_CMUP,DL_Taxe1,DL_Taxe2,DL_Taxe3,DL_MontantTTC,DL_Ligne,DL_Remise01REM_Valeur,DL_Remise01REM_Type,
+        CASE WHEN DL_Remise01REM_Type=0 THEN ''  
+				WHEN DL_Remise01REM_Type=1 THEN cast(cast(DL_Remise01REM_Valeur as numeric(9,2)) as varchar(10))+'%' 
+					ELSE cast(cast(DL_Remise01REM_Valeur as numeric(9,2)) as varchar(10))+'U' END DL_Remise,
+        DL_PrixUnitaire -(CASE WHEN DL_Remise01REM_Type= 0 THEN DL_PrixUnitaire
+								WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+									WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END) DL_PrixUnitaire_Rem,
+        DL_PUTTC -(CASE WHEN DL_Remise01REM_Type= 0 THEN DL_PUTTC
+	ELSE CASE WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+		ELSE CASE WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END END END) DL_PUTTC_Rem,
+		DL_PrixUnitaire -(CASE WHEN DL_Remise01REM_Type= 0 THEN 0
+	ELSE CASE WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+		ELSE CASE WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END END END) DL_PrixUnitaire_Rem0,
+        DL_PUTTC -(CASE WHEN DL_Remise01REM_Type= 0 THEN 0
+	ELSE CASE WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+		ELSE CASE WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END END END) DL_PUTTC_Rem0,
+        (CASE WHEN DL_Remise01REM_Type= 0 THEN 0
+	ELSE CASE WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+		ELSE CASE WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END END END) Val_Remise
+        FROM F_DOCLIGNE  
+        WHERE DO_Piece =@DoPiece AND DO_Domaine=@DoDomaine AND DO_Type = @DoType)A
+        ORDER BY cbMarq
+</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="DL_PUDevise">
+        <DataField>DL_PUDevise</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="CA_Num">
+        <DataField>CA_Num</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DL_TTC">
+        <DataField>DL_TTC</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+      <Field Name="DL_PUTTC">
+        <DataField>DL_PUTTC</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_MvtStock">
+        <DataField>DL_MvtStock</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+      <Field Name="CT_Num">
+        <DataField>CT_Num</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="cbMarq">
+        <DataField>cbMarq</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="DL_TypeTaux1">
+        <DataField>DL_TypeTaux1</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+      <Field Name="DL_TypeTaux2">
+        <DataField>DL_TypeTaux2</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+      <Field Name="DL_TypeTaux3">
+        <DataField>DL_TypeTaux3</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+      <Field Name="cbCreateur">
+        <DataField>cbCreateur</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DL_NoColis">
+        <DataField>DL_NoColis</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="MT_Taxe1">
+        <DataField>MT_Taxe1</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="MT_Taxe2">
+        <DataField>MT_Taxe2</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="MT_Taxe3">
+        <DataField>MT_Taxe3</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_MontantHT">
+        <DataField>DL_MontantHT</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DO_Piece">
+        <DataField>DO_Piece</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="AR_Ref">
+        <DataField>AR_Ref</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DE_No">
+        <DataField>DE_No</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="AR_PrixAch">
+        <DataField>AR_PrixAch</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_Design">
+        <DataField>DL_Design</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DL_Qte">
+        <DataField>DL_Qte</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_PrixUnitaire">
+        <DataField>DL_PrixUnitaire</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_CMUP">
+        <DataField>DL_CMUP</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_Taxe1">
+        <DataField>DL_Taxe1</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_Taxe2">
+        <DataField>DL_Taxe2</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_Taxe3">
+        <DataField>DL_Taxe3</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_MontantTTC">
+        <DataField>DL_MontantTTC</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_Ligne">
+        <DataField>DL_Ligne</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="DL_Remise01REM_Valeur">
+        <DataField>DL_Remise01REM_Valeur</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_Remise01REM_Type">
+        <DataField>DL_Remise01REM_Type</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+      <Field Name="DL_Remise">
+        <DataField>DL_Remise</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DL_PrixUnitaire_Rem">
+        <DataField>DL_PrixUnitaire_Rem</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_PUTTC_Rem">
+        <DataField>DL_PUTTC_Rem</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_PrixUnitaire_Rem0">
+        <DataField>DL_PrixUnitaire_Rem0</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="DL_PUTTC_Rem0">
+        <DataField>DL_PUTTC_Rem0</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="Val_Remise">
+        <DataField>Val_Remise</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="PourcRemise">
+        <DataField>PourcRemise</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

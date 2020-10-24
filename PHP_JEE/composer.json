@@ -1,0 +1,11 @@
+{
+    "require": {
+        "phpmailer/phpmailer": "6.1",
+        "spipu/html2pdf": "v5.2.2",
+        "ejdamm/chart.js-php": "v2.0",
+        "chartblocks/php-ssrs": "1.0.14"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
+
