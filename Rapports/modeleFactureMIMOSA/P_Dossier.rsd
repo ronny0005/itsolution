@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <CommandText>
+SELECT D_Commentaire,D_RaisonSoc,D_CodePostal,D_Ville,D_Pays,D_EmailSoc, 
+D_Telephone,D_CodePostal + ' ' + D_Ville + ' ' + D_Pays BP,D_Identifiant,D_Siret,D_Complement,D_Adresse,D_Profession
+FROM P_DOSSIER</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="D_Commentaire">
+        <DataField>D_Commentaire</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_RaisonSoc">
+        <DataField>D_RaisonSoc</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_CodePostal">
+        <DataField>D_CodePostal</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Ville">
+        <DataField>D_Ville</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Pays">
+        <DataField>D_Pays</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_EmailSoc">
+        <DataField>D_EmailSoc</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Telephone">
+        <DataField>D_Telephone</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="BP">
+        <DataField>BP</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Identifiant">
+        <DataField>D_Identifiant</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Siret">
+        <DataField>D_Siret</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Complement">
+        <DataField>D_Complement</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Adresse">
+        <DataField>D_Adresse</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="D_Profession">
+        <DataField>D_Profession</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

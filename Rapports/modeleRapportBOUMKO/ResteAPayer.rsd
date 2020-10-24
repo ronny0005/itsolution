@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@cbMarq">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>
+DECLARE @montantRegle as FLOAT
+DECLARE @avanceRegle as FLOAT
+DECLARE @resteAPayer as FLOAT
+DECLARE @regleFlag as tinyint
+
+SELECT @montantRegle = SUM(DL_MontantTTC) 
+FROM F_DOCENTETE A 
+INNER JOIN F_DOCLIGNE B 
+ON A.DO_Domaine = B.DO_Domaine 
+AND A.DO_Type = B.DO_Type 
+AND A.cbDO_Piece = B.cbDO_Piece
+WHERE A.cbMarq = @cbMarq
+
+SELECT @avanceRegle = SUM(RC_Montant)
+FROM  F_DOCENTETE A
+INNER JOIN F_REGLECH B 
+ON A.DO_Domaine = B.DO_Domaine 
+AND A.DO_Type = B.DO_Type 
+AND A.cbDO_Piece = B.cbDO_Piece
+WHERE A.cbMarq = @cbMarq
+
+SELECT @regleFlag = DR_Regle
+FROM  F_DOCENTETE A
+INNER JOIN F_DOCREGL B 
+ON A.DO_Domaine = B.DO_Domaine 
+AND A.DO_Type = B.DO_Type 
+AND A.cbDO_Piece = B.cbDO_Piece
+WHERE A.cbMarq = @cbMarq
+
+
+SELECT	@resteAPayer= ISNULL(@montantRegle,0) - ISNULL(@avanceRegle,0)
+
+SELECT	@resteAPayer as ResteAPayer
+		,@avanceRegle avance
+		,@montantRegle montantRegle 
+		,CASE WHEN @regleFlag=1 THEN 'Comptant' ELSE 'Crédit' END as Statut</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="ResteAPayer">
+        <DataField>ResteAPayer</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="avance">
+        <DataField>avance</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="montantRegle">
+        <DataField>montantRegle</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Statut">
+        <DataField>Statut</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

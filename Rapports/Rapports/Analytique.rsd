@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <CommandText>SELECT 0 cbIndice, 'Tout' A_Intitule
+UNION
+SELECT cbIndice, A_Intitule
+FROM P_ANALYTIQUE</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="cbIndice">
+        <DataField>cbIndice</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="A_Intitule">
+        <DataField>A_Intitule</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>
