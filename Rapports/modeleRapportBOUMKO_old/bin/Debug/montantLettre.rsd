@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@cbMarq">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT dbo.NombreEnLettres(SUM(DL_MontantTTC))+' FCFA' as MontantLettre
+FROM (SELECT DO_Type,DO_Domaine,cbDO_Piece
+FROM F_DOCENTETE A
+WHERE A.cbMarq = @cbMarq)A
+INNER JOIN F_DOCLIGNE B 
+ON A.DO_Domaine=B.DO_Domaine 
+AND A.cbDO_Piece=B.cbDO_Piece 
+AND A.DO_Type = B.DO_Type</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="MontantLettre">
+        <DataField>MontantLettre</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

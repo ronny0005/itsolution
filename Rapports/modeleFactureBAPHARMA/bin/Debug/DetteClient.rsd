@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@cbMarqP">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>declare @cbMarq as int
+declare @ctNum as varchar(20)
+declare @doDate as varchar(20)
+set @cbMarq=@cbMarqP;
+
+SELECT	@ctNum = DO_Tiers
+		,@doDate = DO_Date
+FROM	F_DOCENTETE d
+WHERE cbMarq = @cbMarq;
+
+WITH _Ligne_ AS (
+	SELECT	docE.DO_Domaine
+			,docE.DO_Type
+			,docE.DO_Piece
+			,docE.DO_Tiers
+			,DL_MontantTTC = SUM(DL_MontantTTC) 
+	FROM	F_DOCENTETE docE
+	INNER JOIN F_DOCLIGNE docL 
+		ON	docE.DO_Domaine = docL.DO_Domaine 
+		AND docE.DO_Piece = docL.DO_Piece
+		AND docE.DO_Type= docL.DO_Type
+	WHERE	docE.DO_Date&lt;=@doDate
+	AND		docE.DO_Tiers=@ctNum
+	AND		docE.cbMarq&lt;@cbMarq
+	GROUP BY docE.DO_Domaine,docE.DO_Type,docE.DO_Piece,docE.DO_Tiers,docE.DO_Date
+)
+, _Regle_ AS (
+	SELECT	DO_Piece,DO_Domaine,DO_Type, RC_Montant = SUM(RC_Montant) 
+	FROM	F_REGLECH
+	GROUP BY DO_Piece,DO_Domaine,DO_Type
+)
+SELECT	MONTANT = SUM(DL_MontantTTC) - SUM(ISNULL(RC_Montant,0)) 
+FROM	_Ligne_ L
+INNER JOIN 	F_COMPTET C 
+	ON	L.DO_Tiers = C.CT_Num
+INNER JOIN	F_DOCREGL D 
+	ON	L.DO_Piece=D.DO_Piece 
+	AND DR_Regle = 0
+LEFT JOIN _Regle_ RE 
+	ON	L.DO_Piece=RE.DO_Piece 
+	AND L.DO_Domaine=RE.DO_Domaine 
+	AND L.DO_Type=RE.DO_Type
+WHERE	L.DO_Type IN(6,7)</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="MONTANT">
+        <DataField>MONTANT</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>
