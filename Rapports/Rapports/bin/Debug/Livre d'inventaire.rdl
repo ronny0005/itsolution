@@ -3654,7 +3654,7 @@ GROUP BY
           <ParameterName>ArticleFin</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
+          <ColumnIndex>1</ColumnIndex>
           <RowIndex>1</RowIndex>
           <ParameterName>DateFin</ParameterName>
         </CellDefinition>
@@ -3664,7 +3664,7 @@ GROUP BY
           <ParameterName>DateDebut</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>3</ColumnIndex>
+          <ColumnIndex>2</ColumnIndex>
           <RowIndex>1</RowIndex>
           <ParameterName>rupture</ParameterName>
         </CellDefinition>
