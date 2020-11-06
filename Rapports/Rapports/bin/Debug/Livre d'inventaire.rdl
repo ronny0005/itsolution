@@ -3435,21 +3435,7 @@ GROUP BY
                     <Paragraph>
                       <TextRuns>
                         <TextRun>
-                          <Value>Période du </Value>
-                          <Style />
-                        </TextRun>
-                        <TextRun>
-                          <Label>DateDebut</Label>
-                          <Value>=FormatDateTime(Parameters!DateDebut.Value, Microsoft.VisualBasic.DateFormat.ShortDate)</Value>
-                          <Style />
-                        </TextRun>
-                      </TextRuns>
-                      <Style />
-                    </Paragraph>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=Globals!ExecutionTime</Value>
+                          <Value>=iif(Parameters!ChoixInventaire.Value=1,"Date indiqué du ","Cumul de stock du ") + FormatDateTime(Parameters!DateDebut.Value,DateFormat.ShortDate)</Value>
                           <Style />
                         </TextRun>
                       </TextRuns>

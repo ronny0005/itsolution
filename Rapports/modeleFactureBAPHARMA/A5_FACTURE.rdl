@@ -159,6 +159,10 @@
           <DataField>D_Adresse</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="D_Profession">
+          <DataField>D_Profession</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Ligne">
@@ -1928,7 +1932,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!MONTANT.Value, "DetteClient")</Value>
+                                  <Value>=Sum(Fields!MONTANT.Value, "DetteClient")-Sum(Fields!DL_MontantTTC.Value, "Ligne")+Sum(Fields!avance.Value, "ResteAPayer")</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -2036,7 +2040,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!MONTANT.Value, "DetteClient")+Sum(Fields!DL_MontantTTC.Value, "Ligne")-Sum(Fields!RG_Montant.Value, "Reglement")</Value>
+                                  <Value>=Sum(Fields!MONTANT.Value, "DetteClient")</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -2279,7 +2283,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Facture N° : </Value>
+                      <Value>Proforma N° : </Value>
                       <Style />
                     </TextRun>
                     <TextRun>
@@ -2425,7 +2429,7 @@
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>12418</Value>
+          <Value>12438</Value>
         </Values>
       </DefaultValue>
       <Prompt>cbMarq</Prompt>

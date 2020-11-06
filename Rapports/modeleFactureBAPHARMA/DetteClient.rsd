@@ -34,7 +34,6 @@ WITH _Ligne_ AS (
 		AND docE.DO_Type= docL.DO_Type
 	WHERE	docE.DO_Date&lt;=@doDate
 	AND		docE.DO_Tiers=@ctNum
-	AND		docE.cbMarq&lt;@cbMarq
 	GROUP BY docE.DO_Domaine,docE.DO_Type,docE.DO_Piece,docE.DO_Tiers,docE.DO_Date
 )
 , _Regle_ AS (
