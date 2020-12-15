@@ -250,7 +250,7 @@ toto
 								AND		fDoc.DO_Date &gt;= @DateDeb AND fDoc.DO_Date &lt;= @DateFin  
 		   AND fDoc.DL_NonLivre=0
 			 AND fArt.AR_HorsStat = 0 
-			 AND fArt.AR_SuiviStock&gt;0
+		--	 AND fArt.AR_SuiviStock&gt;0
 		)) fr
 GROUP BY cbAR_Ref,DE_No 
 
