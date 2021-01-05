@@ -10,21 +10,6 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="Depot">
-      <SharedDataSet>
-        <SharedDataSetReference>Depot</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="DE_No">
-          <DataField>DE_No</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="DE_Intitule">
-          <DataField>DE_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Requete">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
@@ -2527,13 +2512,6 @@ ORDER BY AR_Design</CommandText>
         </Values>
       </DefaultValue>
       <Prompt>Agence</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Depot</DataSetName>
-          <ValueField>DE_No</ValueField>
-          <LabelField>DE_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="rupture">
       <DataType>Boolean</DataType>

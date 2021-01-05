@@ -10,36 +10,6 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="Depot">
-      <SharedDataSet>
-        <SharedDataSetReference>Depot</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="DE_No">
-          <DataField>DE_No</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="DE_Intitule">
-          <DataField>DE_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ArticleDebut">
-      <SharedDataSet>
-        <SharedDataSetReference>Article</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="AR_Ref">
-          <DataField>AR_Ref</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="AR_Design">
-          <DataField>AR_Design</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Requete">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
@@ -299,21 +269,6 @@ ORDER BY  DE_Intitule,
         <Field Name="DE_Intitule">
           <DataField>DE_Intitule</DataField>
           <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ArticleFin">
-      <SharedDataSet>
-        <SharedDataSetReference>Article</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="AR_Ref">
-          <DataField>AR_Ref</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="AR_Design">
-          <DataField>AR_Design</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1335,7 +1290,6 @@ ORDER BY  DE_Intitule,
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -1389,7 +1343,6 @@ ORDER BY  DE_Intitule,
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1442,7 +1395,6 @@ ORDER BY  DE_Intitule,
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1495,7 +1447,6 @@ ORDER BY  DE_Intitule,
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1550,7 +1501,6 @@ ORDER BY  DE_Intitule,
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1608,7 +1558,6 @@ ORDER BY  DE_Intitule,
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -1662,7 +1611,6 @@ ORDER BY  DE_Intitule,
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1715,7 +1663,6 @@ ORDER BY  DE_Intitule,
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1768,7 +1715,6 @@ ORDER BY  DE_Intitule,
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1823,7 +1769,6 @@ ORDER BY  DE_Intitule,
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2155,13 +2100,6 @@ ORDER BY  DE_Intitule,
         </Values>
       </DefaultValue>
       <Prompt>Article de</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ArticleDebut</DataSetName>
-          <ValueField>AR_Ref</ValueField>
-          <LabelField>AR_Design</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="ArticleFin">
       <DataType>String</DataType>
@@ -2171,13 +2109,6 @@ ORDER BY  DE_Intitule,
         </Values>
       </DefaultValue>
       <Prompt> a :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ArticleFin</DataSetName>
-          <ValueField>AR_Ref</ValueField>
-          <LabelField>AR_Design</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="Agence">
       <DataType>Integer</DataType>
@@ -2187,13 +2118,6 @@ ORDER BY  DE_Intitule,
         </Values>
       </DefaultValue>
       <Prompt>Agence</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Depot</DataSetName>
-          <ValueField>DE_No</ValueField>
-          <LabelField>DE_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="Famille">
       <DataType>String</DataType>

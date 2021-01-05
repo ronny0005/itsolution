@@ -10,21 +10,6 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="Depot">
-      <SharedDataSet>
-        <SharedDataSetReference>Depot</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="DE_No">
-          <DataField>DE_No</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="DE_Intitule">
-          <DataField>DE_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Requete">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
@@ -210,46 +195,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
         </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="ClientDebut">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ClientFin">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="typeFacture">
       <SharedDataSet>
         <SharedDataSetReference>TypeFacture</SharedDataSetReference>
@@ -375,7 +320,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -689,7 +633,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
                           </Style>
                         </Textbox>
                         <ColSpan>9</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -754,7 +697,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1228,7 +1170,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1709,7 +1650,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -2495,7 +2435,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Requete</DataSetName>
-            <Top>0cm</Top>
             <Height>3.87124cm</Height>
             <Width>22.50003cm</Width>
             <Style>
@@ -2780,13 +2719,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
         </Values>
       </DefaultValue>
       <Prompt>Agence</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Depot</DataSetName>
-          <ValueField>DE_No</ValueField>
-          <LabelField>DE_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="rupture">
       <DataType>Boolean</DataType>
@@ -2833,13 +2765,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
         </Values>
       </DefaultValue>
       <Prompt>Client de :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ClientDebut</DataSetName>
-          <ValueField>CT_Num</ValueField>
-          <LabelField>CT_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="ClientFin">
       <DataType>String</DataType>
@@ -2849,13 +2774,6 @@ ORDER BY NbJoursRetard,DR_Date DESC</CommandText>
         </Values>
       </DefaultValue>
       <Prompt>de :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ClientFin</DataSetName>
-          <ValueField>CT_Num</ValueField>
-          <LabelField>CT_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="Affaire">
       <DataType>String</DataType>

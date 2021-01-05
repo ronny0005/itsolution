@@ -131,46 +131,6 @@ ORDER BY c1.ligne,c1.DO_Tiers</CommandText>
         </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="ClientDebut">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ClientFin">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Entete">
       <SharedDataSet>
         <SharedDataSetReference>Entete</SharedDataSetReference>
@@ -1632,13 +1592,6 @@ ORDER BY c1.ligne,c1.DO_Tiers</CommandText>
         </Values>
       </DefaultValue>
       <Prompt>Client de :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ClientDebut</DataSetName>
-          <ValueField>CT_Num</ValueField>
-          <LabelField>CT_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="PROT_No">
       <DataType>String</DataType>

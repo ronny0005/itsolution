@@ -8,11 +8,11 @@
     <OverwriteDataSources>False</OverwriteDataSources>
     <TargetServerVersion>SSRS2016</TargetServerVersion>
     <Platform>Win32</Platform>
-    <TargetReportFolder>RapportMADIBA/Rapports</TargetReportFolder>
-    <TargetDatasetFolder>RapportMADIBA/Datasets</TargetDatasetFolder>
-    <TargetDatasourceFolder>RapportMADIBA/DataSources</TargetDatasourceFolder>
+    <TargetReportFolder>RapportCMI/Rapports</TargetReportFolder>
+    <TargetDatasetFolder>RapportCMI/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>RapportCMI/DataSources</TargetDatasourceFolder>
     <TargetReportPartFolder>Parties de rapports</TargetReportPartFolder>
-    <TargetServerURL>http://itsolution.ddns.net:1822/reportserver</TargetServerURL>
+    <TargetServerURL>http://localhost:1822/reportserver</TargetServerURL>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'DebugLocal' ">
     <FullPath>DebugLocal</FullPath>
@@ -112,6 +112,7 @@
     <Report Include="Statistique article par agence.rdl" />
     <Report Include="Statistique article par agence_2.rdl" />
     <Report Include="Statistique article par fournisseur.rdl" />
+    <Report Include="Statistique article par palmares.rdl" />
     <Report Include="Statistique client par agence.rdl" />
     <Report Include="Statistique client par article.rdl" />
     <Report Include="Statistique collaborateur par article.rdl" />

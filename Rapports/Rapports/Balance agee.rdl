@@ -239,21 +239,6 @@ SELECT	fCpteG.CG_Num
         </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="CompteG">
-      <SharedDataSet>
-        <SharedDataSetReference>CompteG</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CG_Num">
-          <DataField>CG_Num</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CG_Intitule">
-          <DataField>CG_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Collaborateur">
       <SharedDataSet>
         <SharedDataSetReference>Collaborateur</SharedDataSetReference>
@@ -1136,7 +1121,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1175,7 +1159,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1214,7 +1197,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1253,7 +1235,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1292,7 +1273,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1331,7 +1311,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1456,7 +1435,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1496,7 +1474,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1536,7 +1513,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1576,7 +1552,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1616,7 +1591,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1656,7 +1630,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1773,7 +1746,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1829,7 +1801,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1885,7 +1856,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1941,7 +1911,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1997,7 +1966,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -2053,7 +2021,6 @@ SELECT	fCpteG.CG_Num
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2101,7 +2068,7 @@ SELECT	fCpteG.CG_Num
             </TablixRowHierarchy>
             <DataSetName>Requete</DataSetName>
             <Height>1.43077in</Height>
-            <Width>9.33279in</Width>
+            <Width>9.33278in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2112,7 +2079,7 @@ SELECT	fCpteG.CG_Num
         <Height>4.23416cm</Height>
         <Style />
       </Body>
-      <Width>23.70528cm</Width>
+      <Width>23.70529cm</Width>
       <Page>
         <PageHeader>
           <Height>3.14852cm</Height>
@@ -2420,13 +2387,6 @@ SELECT	fCpteG.CG_Num
         </Values>
       </DefaultValue>
       <Prompt>ComptegDebut</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>CompteG</DataSetName>
-          <ValueField>CG_Num</ValueField>
-          <LabelField>CG_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="ComptegFin">
       <DataType>String</DataType>
@@ -2436,13 +2396,6 @@ SELECT	fCpteG.CG_Num
         </Values>
       </DefaultValue>
       <Prompt>ComptegFin</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>CompteG</DataSetName>
-          <ValueField>CG_Num</ValueField>
-          <LabelField>CG_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="ComptetDebut">
       <DataType>String</DataType>

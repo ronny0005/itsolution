@@ -39,6 +39,7 @@ SELECT	fea.CA_Num
 		,fec.CG_Num
 ,fcg.CG_Intitule
 		,fec.JO_Num
+                              ,fec.EC_Intitule
 		,fjo.JO_Intitule
 		,fec.EC_Piece
 		,mvtDebit = SUM(CASE WHEN fec.EC_Sens = 0 THEN fea.EA_Montant ELSE 0 END)
@@ -65,6 +66,7 @@ GROUP BY DATEADD(D,fec.EC_Jour-1,fec.JM_Date)
 		,fca.CA_Intitule
 		,fjo.JO_Intitule
 		,fec.EC_Piece
+                              ,fec.EC_Intitule
 )
 
 SELECT	CA_Num
@@ -74,6 +76,7 @@ SELECT	CA_Num
 		,CG_Num
 ,CG_Intitule
 		,EC_Piece
+                              ,EC_Intitule
 		,JO_Intitule
 		,mvtDebit
 		,mvtCredit
@@ -114,6 +117,10 @@ ORDER BY CA_Num,CG_Num,DateJour</CommandText>
         </Field>
         <Field Name="EC_Piece">
           <DataField>EC_Piece</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EC_Intitule">
+          <DataField>EC_Intitule</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="mvtCredit">
@@ -639,7 +646,7 @@ ORDER BY CA_Num,CG_Num,DateJour</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox250">
+                        <Textbox Name="Textbox1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -658,7 +665,7 @@ ORDER BY CA_Num,CG_Num,DateJour</CommandText>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox250</rd:DefaultName>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1420,21 +1427,21 @@ ORDER BY CA_Num,CG_Num,DateJour</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="JO_Intitule">
+                        <Textbox Name="EC_Intitule">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!JO_Intitule.Value</Value>
+                                  <Value>=Fields!EC_Intitule.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>JO_Intitule</rd:DefaultName>
+                          <rd:DefaultName>EC_Intitule</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>

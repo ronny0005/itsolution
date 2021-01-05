@@ -24,7 +24,7 @@
             <Value>=Parameters!DateFin.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@CG_NumP">
-            <Value>=Parameters!CG_Num.Value</Value>
+            <Value>=Parameters!ComptegDebut.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@CA_NumP">
             <Value>=Parameters!CA_Num.Value</Value>
@@ -119,21 +119,6 @@ GROUP BY N_Analytique,A.CG_Num,CG_Intitule,A.CA_Num,CA_Intitule,EC_Date</Command
         </Field>
         <Field Name="A_Intitule">
           <DataField>A_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="CompteG">
-      <SharedDataSet>
-        <SharedDataSetReference>CompteG</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CG_Num">
-          <DataField>CG_Num</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CG_Intitule">
-          <DataField>CG_Intitule</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -836,7 +821,7 @@ GROUP BY N_Analytique,A.CG_Num,CG_Intitule,A.CA_Num,CA_Intitule,EC_Date</Command
       </DefaultValue>
       <Prompt>à :</Prompt>
     </ReportParameter>
-    <ReportParameter Name="CG_Num">
+    <ReportParameter Name="ComptegDebut">
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
@@ -844,13 +829,6 @@ GROUP BY N_Analytique,A.CG_Num,CG_Intitule,A.CA_Num,CA_Intitule,EC_Date</Command
         </Values>
       </DefaultValue>
       <Prompt>Compte général</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>CompteG</DataSetName>
-          <ValueField>CG_Num</ValueField>
-          <LabelField>CG_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="A_Analytique">
       <DataType>String</DataType>
@@ -913,7 +891,7 @@ GROUP BY N_Analytique,A.CG_Num,CG_Intitule,A.CA_Num,CA_Intitule,EC_Date</Command
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>1</RowIndex>
-          <ParameterName>CG_Num</ParameterName>
+          <ParameterName>ComptegDebut</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>

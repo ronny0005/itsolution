@@ -10,21 +10,6 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="Caisse">
-      <SharedDataSet>
-        <SharedDataSetReference>Caisse</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CA_No">
-          <DataField>CA_No</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CA_Intitule">
-          <DataField>CA_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Requete">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
@@ -1413,7 +1398,6 @@ AND R.CA_No = M.CA_No
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1974,20 +1958,13 @@ AND R.CA_No = M.CA_No
       </ValidValues>
     </ReportParameter>
     <ReportParameter Name="Caisse">
-      <DataType>Integer</DataType>
+      <DataType>String</DataType>
       <DefaultValue>
         <Values>
           <Value>0</Value>
         </Values>
       </DefaultValue>
       <Prompt>Caisse</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Caisse</DataSetName>
-          <ValueField>CA_No</ValueField>
-          <LabelField>CA_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="ModeReglement">
       <DataType>String</DataType>

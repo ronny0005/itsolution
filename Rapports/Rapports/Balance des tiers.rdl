@@ -10,21 +10,6 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="Depot">
-      <SharedDataSet>
-        <SharedDataSetReference>Depot</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="DE_No">
-          <DataField>DE_No</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="DE_Intitule">
-          <DataField>DE_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Requete">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
@@ -236,46 +221,6 @@ SELECT A.CT_Num,A.CT_Intitule,A.CT_Saut,tiersAntD,tiersAntC,tiersD,tiersC,tiersA
         <Field Name="CumulC">
           <DataField>CumulC</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ClientDebut">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ClientFin">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -2840,19 +2785,11 @@ SELECT A.CT_Num,A.CT_Intitule,A.CT_Saut,tiersAntD,tiersAntC,tiersD,tiersC,tiersA
     <ReportParameter Name="Agence">
       <DataType>Integer</DataType>
       <DefaultValue>
-        <DataSetReference>
-          <DataSetName>Depot</DataSetName>
-          <ValueField>DE_No</ValueField>
-        </DataSetReference>
+        <Values>
+          <Value>0</Value>
+        </Values>
       </DefaultValue>
       <Prompt>Agence</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Depot</DataSetName>
-          <ValueField>DE_No</ValueField>
-          <LabelField>DE_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="rupture">
       <DataType>Boolean</DataType>
@@ -2883,13 +2820,6 @@ SELECT A.CT_Num,A.CT_Intitule,A.CT_Saut,tiersAntD,tiersAntC,tiersD,tiersC,tiersA
         </Values>
       </DefaultValue>
       <Prompt>Client de :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ClientDebut</DataSetName>
-          <ValueField>CT_Num</ValueField>
-          <LabelField>CT_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="ClientFin">
       <DataType>String</DataType>
@@ -2899,13 +2829,6 @@ SELECT A.CT_Num,A.CT_Intitule,A.CT_Saut,tiersAntD,tiersAntC,tiersD,tiersC,tiersA
         </Values>
       </DefaultValue>
       <Prompt>de :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ClientFin</DataSetName>
-          <ValueField>CT_Num</ValueField>
-          <LabelField>CT_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="TypeTiers">
       <DataType>String</DataType>

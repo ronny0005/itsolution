@@ -10,21 +10,6 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="Depot">
-      <SharedDataSet>
-        <SharedDataSetReference>Depot</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="DE_No">
-          <DataField>DE_No</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="DE_Intitule">
-          <DataField>DE_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Requete">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
@@ -121,26 +106,6 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
         <Field Name="DE_Intitule">
           <DataField>DE_Intitule</DataField>
           <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ClientDebut">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1074,7 +1039,6 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                           </Style>
                         </Textbox>
                         <ColSpan>5</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -1297,7 +1261,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
       <Width>8.3125in</Width>
       <Page>
         <PageHeader>
-          <Height>1.1918in</Height>
+          <Height>1.19181in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1548,13 +1512,6 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
         </Values>
       </DefaultValue>
       <Prompt>Agence</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Depot</DataSetName>
-          <ValueField>DE_No</ValueField>
-          <LabelField>DE_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="ClientDebut">
       <DataType>String</DataType>
@@ -1564,13 +1521,6 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
         </Values>
       </DefaultValue>
       <Prompt>Client de :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ClientDebut</DataSetName>
-          <ValueField>CT_Num</ValueField>
-          <LabelField>CT_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="PROT_No">
       <DataType>String</DataType>

@@ -10,21 +10,6 @@
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="Depot">
-      <SharedDataSet>
-        <SharedDataSetReference>Depot</SharedDataSetReference>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="DE_No">
-          <DataField>DE_No</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="DE_Intitule">
-          <DataField>DE_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="Requete">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
@@ -171,46 +156,6 @@ GROUP BY ISNULL(A.CT_Num,B.CT_NumPayeur)
         </Field>
         <Field Name="CA_Num">
           <DataField>CA_Num</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ClientDebut">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="ClientFin">
-      <SharedDataSet>
-        <SharedDataSetReference>Tiers</SharedDataSetReference>
-        <QueryParameters>
-          <QueryParameter Name="@CT_Type">
-            <Value>0</Value>
-          </QueryParameter>
-        </QueryParameters>
-      </SharedDataSet>
-      <Fields>
-        <Field Name="CT_Num">
-          <DataField>CT_Num</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="CT_Intitule">
-          <DataField>CT_Intitule</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -1395,7 +1340,6 @@ GROUP BY ISNULL(A.CT_Num,B.CT_NumPayeur)
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Requete</DataSetName>
-            <Top>-0.00001cm</Top>
             <Height>1.86122in</Height>
             <Width>7.8125in</Width>
             <Style>
@@ -1405,7 +1349,7 @@ GROUP BY ISNULL(A.CT_Num,B.CT_NumPayeur)
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>4.7275cm</Height>
+        <Height>4.72751cm</Height>
         <Style />
       </Body>
       <Width>19.84375cm</Width>
@@ -1659,19 +1603,11 @@ GROUP BY ISNULL(A.CT_Num,B.CT_NumPayeur)
     <ReportParameter Name="Agence">
       <DataType>String</DataType>
       <DefaultValue>
-        <DataSetReference>
-          <DataSetName>Affaire</DataSetName>
-          <ValueField>CA_Num</ValueField>
-        </DataSetReference>
+        <Values>
+          <Value>0</Value>
+        </Values>
       </DefaultValue>
       <Prompt>Agence</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Affaire</DataSetName>
-          <ValueField>CA_Num</ValueField>
-          <LabelField>CA_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="rupture">
       <DataType>Boolean</DataType>
@@ -1702,13 +1638,6 @@ GROUP BY ISNULL(A.CT_Num,B.CT_NumPayeur)
         </Values>
       </DefaultValue>
       <Prompt>Client de :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ClientDebut</DataSetName>
-          <ValueField>CT_Num</ValueField>
-          <LabelField>CT_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="ClientFin">
       <DataType>String</DataType>
@@ -1718,13 +1647,6 @@ GROUP BY ISNULL(A.CT_Num,B.CT_NumPayeur)
         </Values>
       </DefaultValue>
       <Prompt>de :</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>ClientFin</DataSetName>
-          <ValueField>CT_Num</ValueField>
-          <LabelField>CT_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="TypeTiers">
       <DataType>String</DataType>
