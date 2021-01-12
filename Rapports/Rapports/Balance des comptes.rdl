@@ -20,11 +20,19 @@
           <QueryParameter Name="@dateFinP">
             <Value>=Parameters!DateFin.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@cgNumDebutP">
+            <Value>=Parameters!ComptegDebut.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@cgNumFinP">
+            <Value>=Parameters!ComptegFin.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandText>
 
 	DECLARE @DateDebut date = @dateDebutP
 	DECLARE @DateFin date = @dateFinP
+	DECLARE @cgNumDebut NVARCHAR(50) = @cgNumDebutP
+	DECLARE @cgNumFin NVARCHAR(50) = @cgNumFinP
 	DECLARE @P1 date = @DateDebut
 	DECLARE @P2 date = @DateDebut
 	DECLARE @P3 date = @DateDebut
@@ -43,12 +51,12 @@
 			,aNvCisCompteBilan = CASE WHEN LEFT(CG_Num,1) &lt; '6' THEN A.aNvC ELSE 0 END
 			,compteDisCompteBilan = CASE WHEN LEFT(CG_Num,1) &lt; '6' THEN A.compteD ELSE 0 END
 			,compteCisCompteBilan = CASE WHEN LEFT(CG_Num,1) &lt; '6' THEN A.compteC ELSE 0 END
-			,antDisCompteGestion = CASE WHEN LEFT(CG_Num,1) = '6' THEN A.antD ELSE 0 END
-			,antCisCompteGestion = CASE WHEN LEFT(CG_Num,1) = '6' THEN A.antC ELSE 0 END
-			,aNvDisCompteGestion = CASE WHEN LEFT(CG_Num,1) = '6' THEN A.aNvD ELSE 0 END
-			,aNvCisCompteGestion = CASE WHEN LEFT(CG_Num,1) = '6' THEN A.aNvC ELSE 0 END
-			,compteDisCompteGestion = CASE WHEN LEFT(CG_Num,1) = '6' THEN A.compteD ELSE 0 END
-			,compteCisCompteGestion = CASE WHEN LEFT(CG_Num,1) = '6' THEN A.compteC ELSE 0 END
+			,antDisCompteGestion = CASE WHEN LEFT(CG_Num,1) &gt;= '6' THEN A.antD ELSE 0 END
+			,antCisCompteGestion = CASE WHEN LEFT(CG_Num,1) &gt;= '6' THEN A.antC ELSE 0 END
+			,aNvDisCompteGestion = CASE WHEN LEFT(CG_Num,1) &gt;= '6' THEN A.aNvD ELSE 0 END
+			,aNvCisCompteGestion = CASE WHEN LEFT(CG_Num,1) &gt;= '6' THEN A.aNvC ELSE 0 END
+			,compteDisCompteGestion = CASE WHEN LEFT(CG_Num,1) &gt;= '6' THEN A.compteD ELSE 0 END
+			,compteCisCompteGestion = CASE WHEN LEFT(CG_Num,1) &gt;= '6' THEN A.compteC ELSE 0 END
 			,GroupData = LEFT(CG_Num,2)
 			,FilterGroup = CASE WHEN cpteG.CG_Type = 1 THEN 1
 								WHEN cpteG.CG_Type = 0 AND A.compteC IS NULL AND A.compteD IS NULL THEN 0 
@@ -68,6 +76,8 @@
 				WHERE
 					DATEADD(d,EC_Jour - 1,JM_Date) &gt;= @P5 AND DATEADD(d,EC_Jour - 1,JM_Date) &lt;= @P6
 						AND JO_Type BETWEEN 0 AND 3
+					AND (@cgNumDebut = '' OR fEcg.CG_Num&gt;=@cgNumDebut) 
+						AND (@cgNumFin = '' OR fEcg.CG_Num&lt;=@cgNumFin) 
 				GROUP BY fEcg.cbCG_Num
 			)A
 		RIGHT OUTER JOIN F_COMPTEG cpteG
@@ -81,8 +91,8 @@
 			,cumulC 
 			,cumulDisCompteBilan = CASE WHEN LEFT(CG_Num,1) &lt; '6' THEN cumulD ELSE 0 END
 			,cumulCisCompteBilan = CASE WHEN LEFT(CG_Num,1) &lt; '6' THEN cumulC ELSE 0 END
-			,cumulDisCompteGestion = CASE WHEN LEFT(CG_Num,1) = '6' THEN cumulD ELSE 0 END
-			,cumulCisCompteGestion = CASE WHEN LEFT(CG_Num,1) = '6' THEN cumulC ELSE 0 END
+			,cumulDisCompteGestion = CASE WHEN LEFT(CG_Num,1) &gt;= '6' THEN cumulD ELSE 0 END
+			,cumulCisCompteGestion = CASE WHEN LEFT(CG_Num,1) &gt;= '6' THEN cumulC ELSE 0 END
 			,antDisCompteBilan
 			,antCisCompteBilan
 			,aNvDisCompteBilan
@@ -252,25 +262,25 @@
                   <Width>0.92418in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.04687in</Width>
+                  <Width>2.57716in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.88868in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.1911in</Width>
+                  <Width>0.88868in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.28923in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.26014in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.14555in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.16134in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1.32118in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1.19779in</Width>
+                  <Width>1.14555in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1340,7 +1350,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -2843,7 +2852,7 @@
             </TablixRowHierarchy>
             <DataSetName>Requete</DataSetName>
             <Height>1.90321in</Height>
-            <Width>9.87669in</Width>
+            <Width>10.11917in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2854,7 +2863,7 @@
         <Height>4.83416cm</Height>
         <Style />
       </Body>
-      <Width>25.08679cm</Width>
+      <Width>25.72179cm</Width>
       <Page>
         <PageHeader>
           <Height>3.14852cm</Height>
@@ -2942,7 +2951,7 @@
                   <rd:DefaultName>Textbox3</rd:DefaultName>
                   <Left>2.38194in</Left>
                   <Height>0.32894in</Height>
-                  <Width>5.44613in</Width>
+                  <Width>5.72391in</Width>
                   <ZIndex>1</ZIndex>
                   <Style>
                     <Border>
@@ -2998,7 +3007,7 @@
                   </Paragraphs>
                   <rd:DefaultName>Textbox4</rd:DefaultName>
                   <Top>0.01389in</Top>
-                  <Left>7.89752in</Left>
+                  <Left>8.14752in</Left>
                   <Height>0.6368in</Height>
                   <Width>1.97917in</Width>
                   <ZIndex>2</ZIndex>
@@ -3016,7 +3025,7 @@
               <KeepTogether>true</KeepTogether>
               <Top>0.51944in</Top>
               <Height>0.66458in</Height>
-              <Width>25.08679cm</Width>
+              <Width>25.72179cm</Width>
               <Visibility>
                 <Hidden>=Globals!RenderFormat.IsInteractive</Hidden>
               </Visibility>
@@ -3049,7 +3058,7 @@
               </Paragraphs>
               <rd:DefaultName>textbox1</rd:DefaultName>
               <Height>0.43in</Height>
-              <Width>9.87669in</Width>
+              <Width>10.12669in</Width>
               <ZIndex>1</ZIndex>
               <Visibility>
                 <Hidden>=NOT(Globals!RenderFormat.IsInteractive)</Hidden>
@@ -3103,6 +3112,24 @@
       </DefaultValue>
       <Prompt>à :</Prompt>
     </ReportParameter>
+    <ReportParameter Name="ComptegDebut">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Compte général de </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ComptegFin">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>à </Prompt>
+    </ReportParameter>
     <ReportParameter Name="PROT_No">
       <DataType>String</DataType>
       <DefaultValue>
@@ -3131,6 +3158,16 @@
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>ComptegDebut</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>ComptegFin</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
           <RowIndex>1</RowIndex>
           <ParameterName>PROT_No</ParameterName>
         </CellDefinition>

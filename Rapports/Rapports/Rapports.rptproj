@@ -103,7 +103,9 @@
     <Report Include="ETAT_BUDGET.rdl" />
     <Report Include="Grand livre analytique.rdl" />
     <Report Include="Grand livre tiers commercial.rdl" />
+    <Report Include="Grand livre tiers.rdl" />
     <Report Include="Inventaire_preparatoire.rdl" />
+    <Report Include="Justificatif solde tiers.rdl" />
     <Report Include="Livre d'inventaire.rdl" />
     <Report Include="Mouvement_de_stock.rdl" />
     <Report Include="Rapport journalier d'achat.rdl" />
@@ -115,6 +117,7 @@
     <Report Include="Statistique article par palmares.rdl" />
     <Report Include="Statistique client par agence.rdl" />
     <Report Include="Statistique client par article.rdl" />
+    <Report Include="Statistique clients analyse perf.rdl" />
     <Report Include="Statistique collaborateur par article.rdl" />
     <Report Include="Statistique collaborateur par client.rdl" />
     <Report Include="Statistique des achats analytique.rdl" />

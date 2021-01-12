@@ -1667,19 +1667,11 @@ GROUP BY ISNULL(A.CT_Num,B.CT_NumPayeur)
     <ReportParameter Name="Depot">
       <DataType>String</DataType>
       <DefaultValue>
-        <DataSetReference>
-          <DataSetName>Depot</DataSetName>
-          <ValueField>DE_No</ValueField>
-        </DataSetReference>
+        <Values>
+          <Value>0</Value>
+        </Values>
       </DefaultValue>
       <Prompt>Depot</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>Depot</DataSetName>
-          <ValueField>DE_No</ValueField>
-          <LabelField>DE_Intitule</LabelField>
-        </DataSetReference>
-      </ValidValues>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>

@@ -5,7 +5,7 @@
       <DataSourceReference>DataSource</DataSourceReference>
       <CommandText>SELECT -1 as Id, 'Tout' Intitule
 UNION
-SELECT 3 , 'Clients' 
+SELECT 0 , 'Clients' 
 UNION
 SELECT 1 , 'Fournisseurs' 
 UNION
