@@ -488,7 +488,7 @@
                                 <TextRun>
                                   <Value>Vendeur</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -521,7 +521,7 @@
                                 <TextRun>
                                   <Value>=iif(Parameters!facture.Value = 1, "Facture de vente ", Fields!NomFacture.Value)</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -554,7 +554,7 @@
                                 <TextRun>
                                   <Value>Date :</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -587,7 +587,7 @@
                                 <TextRun>
                                   <Value>=FormatDateTime(Fields!DO_Date.Value,DateFormat.ShortDate)</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -626,7 +626,7 @@
                                 <TextRun>
                                   <Value>=Parameters!vendeur.Value</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -658,7 +658,7 @@
                                 <TextRun>
                                   <Value>=Fields!DO_Piece.Value</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -690,7 +690,7 @@
                                 <TextRun>
                                   <Value>Heure :</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -723,7 +723,7 @@
                                 <TextRun>
                                   <Value>=Format(Now(),"HH:mm")</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -806,7 +806,7 @@
                                 <TextRun>
                                   <Value>Collaborateur :</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>Underline</TextDecoration>
@@ -840,7 +840,7 @@
                                 <TextRun>
                                   <Value>=Fields!CO_Nom.Value</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -877,7 +877,7 @@
                                 <TextRun>
                                   <Value>Référence :</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>Underline</TextDecoration>
@@ -911,7 +911,7 @@
                                 <TextRun>
                                   <Value>=Fields!DO_Ref.Value</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1004,7 +1004,7 @@
                                 <TextRun>
                                   <Value>Référence</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1059,7 +1059,7 @@
                                 <TextRun>
                                   <Value>Désignation</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1116,7 +1116,7 @@
                                 <TextRun>
                                   <Value>Qté</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1171,7 +1171,7 @@
                                 <TextRun>
                                   <Value>P.U.</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1226,7 +1226,7 @@
                                 <TextRun>
                                   <Value>Remise</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1281,7 +1281,7 @@
                                 <TextRun>
                                   <Value>Montant</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1341,7 +1341,7 @@
                                 <TextRun>
                                   <Value>=Fields!AR_Ref.Value</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1393,7 +1393,7 @@
                                 <TextRun>
                                   <Value>=Fields!DL_Design.Value</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1447,7 +1447,7 @@
                                 <TextRun>
                                   <Value>=Fields!DL_Qte.Value</Value>
                                   <Style>
-                                    <FontFamily>arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1502,7 +1502,7 @@
                                 <TextRun>
                                   <Value>=Fields!DL_PUTTC_Rem0.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1555,7 +1555,7 @@
                                 <TextRun>
                                   <Value>=Fields!Val_Remise.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1608,7 +1608,7 @@
                                 <TextRun>
                                   <Value>=Fields!DL_MontantTTC.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1668,7 +1668,7 @@
                                 <TextRun>
                                   <Value>Total</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1727,7 +1727,7 @@
                                 <TextRun>
                                   <Value>=Sum(Fields!DL_MontantTTC.Value)</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1841,7 +1841,7 @@
                                 <TextRun>
                                   <Value>Date</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1896,7 +1896,7 @@
                                 <TextRun>
                                   <Value>Libellé</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1951,7 +1951,7 @@
                                 <TextRun>
                                   <Value>Montant</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2006,7 +2006,7 @@
                                 <TextRun>
                                   <Value>Solde progressif</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2066,7 +2066,7 @@
                                 <TextRun>
                                   <Value>=iif(Fields!RG_Libelle.Value = "SOLDE INITIAL", Nothing, FormatDateTime(Fields!RG_Date.Value, Microsoft.VisualBasic.DateFormat.ShortDate))</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2120,7 +2120,7 @@
                                 <TextRun>
                                   <Value>=Fields!RG_Libelle.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2172,7 +2172,7 @@
                                 <TextRun>
                                   <Value>=Fields!RG_Montant.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -2227,7 +2227,7 @@
                                 <TextRun>
                                   <Value>=Fields!CUMUL.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -2333,7 +2333,7 @@
                   <TextRun>
                     <Value>N.B. : Les marchandises non livrées dans un délais de 30 jours seront soumis aux frais de stockage de 100 FCFA/jour et par article</Value>
                     <Style>
-                      <FontFamily>ARIAL</FontFamily>
+                      <FontFamily>Calibri</FontFamily>
                       <FontSize>8pt</FontSize>
                     </Style>
                   </TextRun>
@@ -2382,7 +2382,7 @@
                                 <TextRun>
                                   <Value>Arrêter la présente facture à la somme de :</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2417,7 +2417,7 @@
                                 <TextRun>
                                   <Value>=First(Fields!MontantLettre.Value, "MontantLettre")</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2489,7 +2489,7 @@
                         <TextRun>
                           <Value>=First(Fields!CT_Intitule.Value, "Entete")</Value>
                           <Style>
-                            <FontFamily>ARial</FontFamily>
+                            <FontFamily>calibri</FontFamily>
                             <FontSize>9pt</FontSize>
                             <FontWeight>Bold</FontWeight>
                           </Style>
@@ -2520,7 +2520,7 @@
                         <TextRun>
                           <Value>="Tel : " + First(Fields!CT_Telephone.Value, "DonneeClient") + Microsoft.VisualBasic.Constants.vbcrlf + "BP :" + First(Fields!CT_CodePostal.Value, "DonneeClient") + Microsoft.VisualBasic.Constants.vbcrlf + "NIU: " + First(Fields!CT_Identifiant.Value, "DonneeClient") + Microsoft.VisualBasic.Constants.vbcrlf + "RCCM : " + First(Fields!CT_Complement.Value, "DonneeClient") + Microsoft.VisualBasic.Constants.vbcrlf + First(Fields!DO_Coord04.Value, "Entete")</Value>
                           <Style>
-                            <FontFamily>ARial</FontFamily>
+                            <FontFamily>calibri</FontFamily>
                             <FontSize>9pt</FontSize>
                           </Style>
                         </TextRun>
@@ -2565,7 +2565,7 @@
                         <TextRun>
                           <Value>=First(Fields!D_RaisonSoc.Value, "P_Dossier")</Value>
                           <Style>
-                            <FontFamily>ARIAL</FontFamily>
+                            <FontFamily>calibri</FontFamily>
                             <FontWeight>Bold</FontWeight>
                           </Style>
                         </TextRun>
@@ -2595,6 +2595,7 @@
                         <TextRun>
                           <Value>=iif(First(Fields!D_Siret.Value, "P_Dossier")  =nothing,"",First(Fields!D_Siret.Value, "P_Dossier")+Microsoft.VisualBasic.Constants.vbcrlf)+First(Fields!D_Identifiant.Value, "P_Dossier")+Microsoft.VisualBasic.Constants.vbcrlf+First(Fields!D_Adresse.Value, "P_Dossier")+ Microsoft.VisualBasic.Constants.vbcrlf+First(Fields!D_Complement.Value, "P_Dossier")+Microsoft.VisualBasic.Constants.vbcrlf+"Agence :"+First(Fields!DE_Intitule.Value, "Entete")+Microsoft.VisualBasic.Constants.vbcrlf + "Téléphone :"+First(Fields!DE_Telephone.Value, "Entete")</Value>
                           <Style>
+                            <FontFamily>calibri</FontFamily>
                             <FontSize>9pt</FontSize>
                           </Style>
                         </TextRun>

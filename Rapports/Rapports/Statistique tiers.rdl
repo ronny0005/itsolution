@@ -20,6 +20,15 @@
           <QueryParameter Name="@dateFinP">
             <Value>=Parameters!DateFin.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@clientDebutP">
+            <Value>=Parameters!ClientDebut.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@clientFinP">
+            <Value>=Parameters!ClientFin.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@typeTiersP">
+            <Value>=Parameters!TypeTiers.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandText>DECLARE @dateDebut VARCHAR(50)
 DECLARE @dateFin VARCHAR(50)
@@ -33,6 +42,9 @@ DECLARE @P7 datetime
 DECLARE @P8 datetime
 DECLARE @P9 smallint
 DECLARE @P10 smallint
+DECLARE @clientDebut VARCHAR(50)
+DECLARE @clientFin VARCHAR(50)
+DECLARE @typeTiers smallint
 SET @dateDebut= @dateDebutP
 SET @dateFin= @dateFinP
 SET @P1 = @dateDebut
@@ -44,27 +56,24 @@ SET @P6 = 1
 SET @P7 = @dateDebut
 SET @P8 = @dateFin
 SET @P9 = 0
-SET @P10 = 1
+SET @P10 = 1;
+SET @clientDebut = @clientDebutP
+SET @clientFin = @clientFinP;
+SET @typeTiers = @typeTiersP;
 
+
+WITH _Query_ AS (
 SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
-	
 	FROM
 		(SELECT fCpteTSel.cbCT_Num,
-		
 			SUM(
-				CASE
-				WHEN DATEADD(d,EC_Jour - 1,JM_Date) &gt;= @P1
-				AND DATEADD(d,EC_Jour - 1,JM_Date) &lt;= @P2
-				AND JO_Type = @P3
+				CASE WHEN JO_Type = @P3
 				THEN EC_Montant * (1 - 2 * EC_Sens)
 				ELSE 0
 				END) cAPrec,
-		
 			SUM(
 				CASE
-				WHEN DATEADD(d,EC_Jour - 1,JM_Date) &gt;= @P4
-				AND DATEADD(d,EC_Jour - 1,JM_Date) &lt;= @P5
-				AND JO_Type = @P6
+				WHEN JO_Type = @P6
 				THEN EC_Montant * (1 - 2 * EC_Sens)
 				ELSE 0
 				END) cA,
@@ -72,12 +81,8 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
 		
 		
 			SUM(
-				CASE
-				WHEN DATEADD(d,EC_Jour - 1,JM_Date) &gt;= @P7
-				AND DATEADD(d,EC_Jour - 1,JM_Date) &lt;= @P8
-				THEN EC_Montant * (1 - 2 * EC_Sens)
-				ELSE 0
-				END) solde
+				EC_Montant * (1 - 2 * EC_Sens)
+				) solde
 		FROM F_ECRITUREC fEcg
 		INNER JOIN F_COMPTET fCpteTSel
 			ON fCpteTSel.cbCT_Num = fEcg.cbCT_Num
@@ -87,10 +92,24 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
 		AND fCpteTSel.CT_Type = @P9
 			AND (EC_Norme = 0 OR EC_Norme = @P10)
 			AND JO_Type BETWEEN 0 AND 3
+		AND DATEADD(d,EC_Jour - 1,JM_Date) &gt;= @P1
+		AND DATEADD(d,EC_Jour - 1,JM_Date) &lt;= @P2
+		AND (@clientDebut='0' OR fCpteTSel.CT_Num &gt;=@clientDebut)
+		AND (@clientFin='0' OR fCpteTSel.CT_Num &lt;=@clientFin)
+		AND (@typeTiers=-1 OR fCpteTSel.CT_Type =@typeTiers)
 		GROUP BY fCpteTSel.cbCT_Num) selection
 	INNER JOIN F_COMPTET fCpteT
 		ON fCpteT.cbCT_Num = selection.cbCT_Num
-	ORDER BY selection.cbCT_Num</CommandText>
+)
+SELECT	CT_Num
+		,CT_Intitule
+		,cAPrec
+		,cA
+		,solde
+		,pourCA = CASE WHEN (SELECT SUM(ca) FROM _Query_)=0 THEN 0 ELSE ca/(SELECT SUM(ca) FROM _Query_)/100 END
+		,pourSolde = CASE WHEN (SELECT SUM(solde) FROM _Query_)= 0 THEN 0 ELSE solde/(SELECT SUM(solde) FROM _Query_)/100 END
+FROM _Query_
+ORDER BY CT_Num</CommandText>
       </Query>
       <Fields>
         <Field Name="DE_No">
@@ -117,9 +136,17 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
           <DataField>cA</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
+        <Field Name="pourCA">
+          <DataField>pourCA</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
         <Field Name="CT_Num">
           <DataField>CT_Num</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="pourSolde">
+          <DataField>pourSolde</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -130,6 +157,21 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
       <Fields>
         <Field Name="D_RaisonSoc">
           <DataField>D_RaisonSoc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="TypeTiers">
+      <SharedDataSet>
+        <SharedDataSetReference>TypeTiers</SharedDataSetReference>
+      </SharedDataSet>
+      <Fields>
+        <Field Name="Id">
+          <DataField>Id</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Intitule">
+          <DataField>Intitule</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -146,22 +188,22 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                   <Width>2.56584cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>8.08872cm</Width>
+                  <Width>6.81872cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.70118cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.52154cm</Width>
+                  <Width>1.91841cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.41552cm</Width>
+                  <Width>1.6801cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.9692cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.44698cm</Width>
+                  <Width>2.05552cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -683,14 +725,14 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="EC_Intitule">
+                        <Textbox Name="pourCA">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=iif(Fields!cA.Value=0,0, SUM(Fields!cA.Value)/Fields!cA.Value)</Value>
+                                  <Value>=Fields!pourCA.Value</Value>
                                   <Style>
                                     <Format>P</Format>
                                   </Style>
@@ -699,7 +741,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>EC_Intitule</rd:DefaultName>
+                          <rd:DefaultName>pourCA</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -730,7 +772,6 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -784,7 +825,6 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -849,7 +889,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=iif(Fields!cAPrec.Value = 0, 0, Sum(Fields!cAPrec.Value) / Fields!cAPrec.Value)</Value>
+                                  <Value>=Fields!pourSolde.Value</Value>
                                   <Style>
                                     <Format>P</Format>
                                   </Style>
@@ -889,7 +929,6 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -906,11 +945,15 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
-                                  <Style />
+                                  <Value>Totaux généraux</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox4</rd:DefaultName>
@@ -944,57 +987,10 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <ColSpan>2</ColSpan>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox5">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox5</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>Solid</Style>
-                            </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <LeftBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </RightBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
+                    <TablixCell />
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox6">
@@ -1006,6 +1002,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                                 <TextRun>
                                   <Value>=Sum(Fields!cA.Value)</Value>
                                   <Style>
+                                    <FontWeight>Bold</FontWeight>
                                     <Format>#,0</Format>
                                   </Style>
                                 </TextRun>
@@ -1057,7 +1054,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                                 <TextRun>
                                   <Value />
                                   <Style>
-                                    <Format>P</Format>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1095,7 +1092,6 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1109,6 +1105,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                                 <TextRun>
                                   <Value />
                                   <Style>
+                                    <FontWeight>Bold</FontWeight>
                                     <Format>P</Format>
                                   </Style>
                                 </TextRun>
@@ -1149,7 +1146,6 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1163,6 +1159,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                                 <TextRun>
                                   <Value>=Sum(Fields!cAPrec.Value)</Value>
                                   <Style>
+                                    <FontWeight>Bold</FontWeight>
                                     <Format>#,0</Format>
                                   </Style>
                                 </TextRun>
@@ -1207,7 +1204,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox10">
+                        <Textbox Name="Textbox11">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1216,7 +1213,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                                 <TextRun>
                                   <Value />
                                   <Style>
-                                    <Format>P</Format>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1225,7 +1222,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox10</rd:DefaultName>
+                          <rd:DefaultName>Textbox11</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1256,7 +1253,6 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1301,7 +1297,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>2.60444cm</Height>
+        <Height>1.8318cm</Height>
         <Style />
       </Body>
       <Width>19.709cm</Width>
@@ -1377,7 +1373,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                     <Paragraph>
                       <TextRuns>
                         <TextRun>
-                          <Value>STATISTIQUE CLIENTS</Value>
+                          <Value>STATISTIQUE TIERS</Value>
                           <Style>
                             <FontSize>14pt</FontSize>
                             <FontWeight>Bold</FontWeight>
@@ -1498,7 +1494,7 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>STATISTIQUE CLIENTS</Value>
+                      <Value>STATISTIQUE TIERS</Value>
                       <Style>
                         <FontFamily>Tahoma</FontFamily>
                         <FontSize>18pt</FontSize>
@@ -1586,6 +1582,17 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
       </DefaultValue>
       <Prompt>a </Prompt>
     </ReportParameter>
+    <ReportParameter Name="TypeTiers">
+      <DataType>String</DataType>
+      <Prompt>Type tiers</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>TypeTiers</DataSetName>
+          <ValueField>Id</ValueField>
+          <LabelField>Intitule</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
     <ReportParameter Name="PROT_No">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1624,6 +1631,11 @@ SELECT fCpteT.CT_Num CT_Num,fCpteT.CT_Intitule CT_Intitule,cAPrec,solde,cA
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>TypeTiers</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
           <RowIndex>2</RowIndex>
           <ParameterName>PROT_No</ParameterName>
         </CellDefinition>

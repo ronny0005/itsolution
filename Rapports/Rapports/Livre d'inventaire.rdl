@@ -33,6 +33,9 @@
             <Value>=Parameters!rupture.Value</Value>
             <rd:UserDefined>true</rd:UserDefined>
           </QueryParameter>
+          <QueryParameter Name="@classementP">
+            <Value>=Parameters!Classement.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandText>declare @dt_deb as varchar(20)
 declare @ArticleDebut as varchar(60)
@@ -41,6 +44,7 @@ declare @de_no as int
 declare @rupture as int
 DECLARE @admin INT
 DECLARE @PROT_No INT
+DECLARE @classement AS INT
 
 CREATE TABLE #TMPDEPOT (DE_No INT)
 SET @PROT_No = @PROT_NoP
@@ -49,6 +53,7 @@ set @ArticleDebut=@ArticleDebutP
 set @ArticleFin=@ArticleFinP
 set @de_no=@de_noP
 set @rupture=@ruptureP;
+SET @classement = @classementP;
 
 SELECT @admin = 1 /*CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END*/ FROM F_PROTECTIONCIAL WHERE PROT_No = @PROT_No 
         IF (@admin=0)
@@ -75,7 +80,12 @@ SELECT @admin = 1 /*CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0
 DECLARE @MAXREPL int;
 	SET @MAXREPL =  (select ISNULL(MAX(DE_Replication),0) from F_DEPOT);
 SELECT ReqGlobal.DE_No ,fDep.DE_Intitule,ReqGlobal.IntituleTri,
-ReqGlobal.IntituleTri2,fArt.AR_Ref,fArt.AR_Design,fArt.AR_SuiviStock,ReqGlobal.AG_No1,ReqGlobal.AG_No2,ReqGlobal.Enumere1,ReqGlobal.Enumere2,ReqGlobal.AE_Ref,
+ReqGlobal.IntituleTri2
+,fArt.AR_Ref 
+,fArt.FA_CodeFamille
+,fArt.AR_Design 
+,fam.FA_Intitule
+,fArt.AR_SuiviStock,ReqGlobal.AG_No1,ReqGlobal.AG_No2,ReqGlobal.Enumere1,ReqGlobal.Enumere2,ReqGlobal.AE_Ref,
 ReqGlobal.LS_NoSerie,ReqGlobal.LS_Peremption,ReqGlobal.LS_Fabrication,CASE WHEN 0 = 0 THEN 1 ELSE ISNULL(fCondi.EC_Quantite,1)END,SUM(ReqGlobal.PR)PR,SUM(ReqGlobal.Qte)Qte
 FROM
 (SELECT
@@ -216,10 +226,17 @@ UNION
 	) ReqGlobal		INNER JOIN F_ARTICLE fArt ON (fArt.cbAR_Ref = ReqGlobal.cbAR_Ref)
 					 INNER JOIN F_DEPOT fDep ON (fDep.DE_No = ReqGlobal.DE_No)
 					LEFT OUTER JOIN F_CONDITION fCondi ON (fArt.CO_No = fCondi.CO_No)
+					LEFT OUTER JOIN F_FAMILLE fam ON (fam.FA_CodeFamille = fArt.FA_CodeFamille)
 	WHERE 
 	    ('0'=@ArticleDebut OR fArt.cbAR_Ref&gt;=@ArticleDebut)
 		AND ('0'=@ArticleFin OR fArt.cbAR_Ref&lt;=@ArticleFin)
-	GROUP BY ReqGlobal.DE_No ,fDep.DE_Intitule,ReqGlobal.IntituleTri,ReqGlobal.IntituleTri2,fArt.AR_Ref,fArt.AR_Design,fArt.AR_SuiviStock,
+	GROUP BY ReqGlobal.DE_No ,fDep.DE_Intitule,ReqGlobal.IntituleTri,ReqGlobal.IntituleTri2
+	
+,fArt.AR_Ref 
+,fArt.FA_CodeFamille
+,fArt.AR_Design
+,fam.FA_Intitule
+,fArt.AR_SuiviStock,
 ReqGlobal.AG_No1,ReqGlobal.AG_No2,ReqGlobal.Enumere1,ReqGlobal.Enumere2,ReqGlobal.AE_Ref,ReqGlobal.LS_NoSerie,ReqGlobal.LS_Peremption,
 ReqGlobal.LS_Fabrication,CASE WHEN 0 = 0 THEN 1 ELSE ISNULL(fCondi.EC_Quantite,1)END</CommandText>
       </Query>
@@ -248,9 +265,17 @@ ReqGlobal.LS_Fabrication,CASE WHEN 0 = 0 THEN 1 ELSE ISNULL(fCondi.EC_Quantite,1
           <DataField>AG_No1</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
+        <Field Name="FA_CodeFamille">
+          <DataField>FA_CodeFamille</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="AG_No2">
           <DataField>AG_No2</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="FA_Intitule">
+          <DataField>FA_Intitule</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Enumere1">
           <DataField>Enumere1</DataField>
@@ -317,21 +342,26 @@ ReqGlobal.LS_Fabrication,CASE WHEN 0 = 0 THEN 1 ELSE ISNULL(fCondi.EC_Quantite,1
           <QueryParameter Name="@de_no">
             <Value>=Parameters!Agence.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@classementP">
+            <Value>=Parameters!Classement.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandText>DECLARE @P1 smallint,@P2 float,@P3 float
 ,@P4 DATE,@P5 varchar(256),@P6 varchar(256),@P7 int
 DECLARE @PROT_No AS INT
 DECLARE @admin INT
+DECLARE @classement AS INT
 CREATE TABLE #TMPDEPOT (DE_No INT)
 SET @PROT_No = @PROT_NoP
 		
 SET @P1 = 0;
 SET @P2 = 0;
 SET @P3 = 0;
-SET @P4 = @dt_deb;
 SET @P5 = @ArticleDebut;
+SET @P4 = @dt_deb;
 SET @P6 = @ArticleFin;
 SET @P7 = @de_no;
+SET @classement = @classementP;
 
 SELECT @admin = 1/*CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END*/ FROM F_PROTECTIONCIAL WHERE PROT_No = @PROT_No 
         IF (@admin=0)
@@ -360,7 +390,9 @@ SELECT @admin = 1/*CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 
 	Article.IntituleTri,
 	Article.IntituleTri2,
 	fArt.AR_Ref,
+	fArt.FA_CodeFamille,
 	fArt.AR_Design,
+	fam.FA_Intitule,
 	fArt.AR_SuiviStock,
 	Article.AG_No1,
 	Article.AG_No2,
@@ -511,9 +543,9 @@ GROUP BY
 		HAVING SUM(Qte)&gt;0)	Article INNER JOIN F_ARTICLE fArt ON (Article.cbAR_Ref = fArt.cbAR_Ref) AND fArt.AR_SuiviStock&gt;0
 								INNER JOIN F_DEPOT fDep ON (Article.DE_No = fDep.DE_No)
 							LEFT OUTER JOIN F_CONDITION fCondi ON (fArt.CO_No = fCondi.CO_No)
+							LEFT OUTER JOIN F_FAMILLE fam ON (fam.FA_CodeFamille = fArt.FA_CodeFamille)
 	ORDER BY
-	Article.DE_No,   ISNULL(Article.IntituleTri,''),Article.IntituleTri2, Article.cbAR_Ref,Article.AG_No1,Article.AG_No2,ISNULL(Article.LS_NoSerie,'')
-	</CommandText>
+	Article.DE_No,   ISNULL(Article.IntituleTri,''),Article.IntituleTri2, Article.cbAR_Ref,Article.AG_No1,Article.AG_No2,ISNULL(Article.LS_NoSerie,'')</CommandText>
       </Query>
       <Fields>
         <Field Name="DE_No">
@@ -536,6 +568,10 @@ GROUP BY
           <DataField>AR_Ref</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="FA_CodeFamille">
+          <DataField>FA_CodeFamille</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="AR_Design">
           <DataField>AR_Design</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -543,6 +579,10 @@ GROUP BY
         <Field Name="AR_SuiviStock">
           <DataField>AR_SuiviStock</DataField>
           <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
+        <Field Name="FA_Intitule">
+          <DataField>FA_Intitule</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="AG_No1">
           <DataField>AG_No1</DataField>
@@ -1140,6 +1180,67 @@ GROUP BY
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
+                  <Height>0.23622in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="FA_CodeFamille">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!FA_CodeFamille.Value</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>FA_CodeFamille</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>5</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
                   <Height>0.25in</Height>
                   <TablixCells>
                     <TablixCell>
@@ -1367,6 +1468,232 @@ GROUP BY
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>PR1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.23622in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox26">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total </Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!FA_CodeFamille.Value</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Qte6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Qte.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Qte6</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox29">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=SUM(Fields!PR.Value)/SUM(Fields!Qte.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox29</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="PR9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!PR.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>PR9</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1880,30 +2207,50 @@ GROUP BY
                     </SortExpression>
                   </SortExpressions>
                   <TablixMembers>
-                    <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
-                    </TablixMember>
+                    <TablixMember />
                     <TablixMember>
                       <Visibility>
                         <Hidden>=iif(Fields!DE_No.Value=0,true,false)</Hidden>
                       </Visibility>
-                      <KeepWithGroup>After</KeepWithGroup>
                     </TablixMember>
+                    <TablixMember />
                     <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
-                    </TablixMember>
-                    <TablixMember>
-                      <Group Name="Details">
+                      <Group Name="FA_CodeFamille">
                         <GroupExpressions>
-                          <GroupExpression>=Fields!AR_Ref.Value</GroupExpression>
+                          <GroupExpression>=Fields!FA_CodeFamille.Value</GroupExpression>
                         </GroupExpressions>
                       </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!FA_CodeFamille.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixMembers>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=Parameters!Classement.Value=1</Hidden>
+                          </Visibility>
+                          <KeepWithGroup>After</KeepWithGroup>
+                        </TablixMember>
+                        <TablixMember>
+                          <Group Name="Details">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!AR_Ref.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=Parameters!Classement.Value=1</Hidden>
+                          </Visibility>
+                          <KeepWithGroup>Before</KeepWithGroup>
+                        </TablixMember>
+                      </TablixMembers>
                     </TablixMember>
                     <TablixMember>
                       <Visibility>
                         <Hidden>=iif(Parameters!rupture.Value=0,true,false)</Hidden>
                       </Visibility>
-                      <KeepWithGroup>Before</KeepWithGroup>
                     </TablixMember>
                   </TablixMembers>
                 </TablixMember>
@@ -1916,7 +2263,7 @@ GROUP BY
             </TablixRowHierarchy>
             <DataSetName>Requete</DataSetName>
             <Top>0.06535cm</Top>
-            <Height>1.59039in</Height>
+            <Height>2.06283in</Height>
             <Width>19.12074cm</Width>
             <Visibility>
               <Hidden>=iif(Parameters!ChoixInventaire.Value=1,true,false)</Hidden>
@@ -2452,6 +2799,67 @@ GROUP BY
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
+                  <Height>0.23622in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="FA_CodeFamille1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!FA_CodeFamille.Value</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>FA_CodeFamille1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>5</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
                   <Height>0.25in</Height>
                   <TablixCells>
                     <TablixCell>
@@ -2679,6 +3087,232 @@ GROUP BY
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>PR1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.23622in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="FA_CodeFamille2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total </Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!FA_CodeFamille.Value</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>FA_CodeFamille2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Qte7">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Qte.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Qte7</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox60">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=SUM(Fields!PR.Value)/SUM(Fields!Qte.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox60</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="PR8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!PR.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>PR8</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -3192,30 +3826,50 @@ GROUP BY
                     </SortExpression>
                   </SortExpressions>
                   <TablixMembers>
-                    <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
-                    </TablixMember>
+                    <TablixMember />
                     <TablixMember>
                       <Visibility>
                         <Hidden>=iif(Fields!DE_No.Value = 0, True, False)</Hidden>
                       </Visibility>
-                      <KeepWithGroup>After</KeepWithGroup>
                     </TablixMember>
+                    <TablixMember />
                     <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
-                    </TablixMember>
-                    <TablixMember>
-                      <Group Name="Details2">
+                      <Group Name="FA_CodeFamille1">
                         <GroupExpressions>
-                          <GroupExpression>=Fields!AR_Ref.Value</GroupExpression>
+                          <GroupExpression>=Fields!FA_CodeFamille.Value</GroupExpression>
                         </GroupExpressions>
                       </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!FA_CodeFamille.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixMembers>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=Parameters!Classement.Value=1</Hidden>
+                          </Visibility>
+                          <KeepWithGroup>After</KeepWithGroup>
+                        </TablixMember>
+                        <TablixMember>
+                          <Group Name="Details2">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!AR_Ref.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=Parameters!Classement.Value=1</Hidden>
+                          </Visibility>
+                          <KeepWithGroup>Before</KeepWithGroup>
+                        </TablixMember>
+                      </TablixMembers>
                     </TablixMember>
                     <TablixMember>
                       <Visibility>
                         <Hidden>=iif(Parameters!rupture.Value = 0, True, False)</Hidden>
                       </Visibility>
-                      <KeepWithGroup>Before</KeepWithGroup>
                     </TablixMember>
                   </TablixMembers>
                 </TablixMember>
@@ -3227,8 +3881,8 @@ GROUP BY
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>RequeteDate</DataSetName>
-            <Top>1.6299in</Top>
-            <Height>1.59039in</Height>
+            <Top>2.2549in</Top>
+            <Height>2.06283in</Height>
             <Width>7.52785in</Width>
             <ZIndex>1</ZIndex>
             <Visibility>
@@ -3241,7 +3895,7 @@ GROUP BY
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>8.81453cm</Height>
+        <Height>10.96704cm</Height>
         <Style />
       </Body>
       <Width>19.12074cm</Width>
@@ -3552,6 +4206,27 @@ GROUP BY
         </ParameterValues>
       </ValidValues>
     </ReportParameter>
+    <ReportParameter Name="Classement">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>classement</Prompt>
+      <ValidValues>
+        <ParameterValues>
+          <ParameterValue>
+            <Value>1</Value>
+            <Label>Article</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>2</Value>
+            <Label>Famille</Label>
+          </ParameterValue>
+        </ParameterValues>
+      </ValidValues>
+    </ReportParameter>
     <ReportParameter Name="AffichePrixVen">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -3614,10 +4289,15 @@ GROUP BY
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>2</RowIndex>
-          <ParameterName>AffichePrixVen</ParameterName>
+          <ParameterName>Classement</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>2</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>AffichePrixVen</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
           <RowIndex>2</RowIndex>
           <ParameterName>PROT_No</ParameterName>
         </CellDefinition>
