@@ -2735,7 +2735,7 @@ FROM	_GroupData_
                 </TablixMember>
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=iif(Parameters!stockReel.Value=false,true,false)</Hidden>
+                    <Hidden>=Not(Parameters!stockReel.Value)</Hidden>
                   </Visibility>
                 </TablixMember>
               </TablixMembers>
@@ -2789,9 +2789,6 @@ FROM	_GroupData_
                   <KeepWithGroup>Before</KeepWithGroup>
                 </TablixMember>
                 <TablixMember>
-                  <Visibility>
-                    <Hidden>=iif(SUM(Fields!DE_No.Value) = 0,false,true)</Hidden>
-                  </Visibility>
                   <KeepWithGroup>Before</KeepWithGroup>
                 </TablixMember>
               </TablixMembers>

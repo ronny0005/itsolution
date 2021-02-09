@@ -21,6 +21,8 @@ Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "Rapports", "Rapports\Rappor
 EndProject
 Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "modeleFactureSODIPROVET", "modeleFactureSODIPROVET\modeleFactureSODIPROVET.rptproj", "{0A54EF79-624F-4436-A354-73A70212A30C}"
 EndProject
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "modeleFactureIngenious", "modeleFactureIngenious\modeleFactureIngenious.rptproj", "{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Default = Debug|Default
@@ -119,6 +121,17 @@ Global
 		{0A54EF79-624F-4436-A354-73A70212A30C}.Release|Default.ActiveCfg = Release
 		{0A54EF79-624F-4436-A354-73A70212A30C}.Release|Default.Build.0 = Release
 		{0A54EF79-624F-4436-A354-73A70212A30C}.Release|Default.Deploy.0 = Release
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Debug|Default.ActiveCfg = Debug
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Debug|Default.Build.0 = Debug
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Debug|Default.Deploy.0 = Debug
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.DebugLocal|Default.ActiveCfg = DebugLocal
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.DebugLocal|Default.Build.0 = DebugLocal
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Development|Default.ActiveCfg = Debug
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Development|Default.Build.0 = Debug
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Development|Default.Deploy.0 = Debug
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Release|Default.ActiveCfg = Release
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Release|Default.Build.0 = Release
+		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Release|Default.Deploy.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

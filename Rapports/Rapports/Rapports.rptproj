@@ -8,9 +8,9 @@
     <OverwriteDataSources>False</OverwriteDataSources>
     <TargetServerVersion>SSRS2016</TargetServerVersion>
     <Platform>Win32</Platform>
-    <TargetReportFolder>RapportBOUMKO/Rapports</TargetReportFolder>
-    <TargetDatasetFolder>RapportBOUMKO/Datasets</TargetDatasetFolder>
-    <TargetDatasourceFolder>RapportBOUMKO/DataSources</TargetDatasourceFolder>
+    <TargetReportFolder>RapportINGENIOUS/Rapports</TargetReportFolder>
+    <TargetDatasetFolder>RapportINGENIOUS/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>RapportINGENIOUS/DataSources</TargetDatasourceFolder>
     <TargetReportPartFolder>Parties de rapports</TargetReportPartFolder>
     <TargetServerURL>http://itsolution.ddns.net:1822/reportserver</TargetServerURL>
   </PropertyGroup>
@@ -122,6 +122,7 @@
     <Report Include="Statistique des achats analytique.rdl" />
     <Report Include="Statistique des achats.rdl" />
     <Report Include="Statistique tiers.rdl" />
+    <Report Include="Stock magasin.rdl" />
     <Report Include="stock_grand_depot.rdl" />
     <Report Include="Transfert caisse.rdl" />
     <Report Include="Versement bancaire.rdl" />
