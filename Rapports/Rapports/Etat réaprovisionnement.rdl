@@ -14,6 +14,9 @@
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
         <QueryParameters>
+          <QueryParameter Name="@ProtNoP">
+            <Value>=Parameters!PROT_No.Value</Value>
+          </QueryParameter>
           <QueryParameter Name="@agence">
             <Value>=Parameters!Agence.Value</Value>
           </QueryParameter>
@@ -30,9 +33,36 @@
         <CommandText>DECLARE @DE_No AS INT
 DECLARE @AR_RefDebut AS VARCHAR(30)
 DECLARE @AR_RefFin AS VARCHAR(30)
+DECLARE @ProtNo AS INT
+DECLARE @admin AS INT
+CREATE TABLE #TMPDEPOT (DE_No INT)
+
+SET @ProtNo=@ProtNoP
 SET @DE_No=@agence
 SET @AR_RefDebut=@articleDebut
 SET @AR_RefFin=@articleFin;
+
+SELECT @admin = CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No = @ProtNo               
+IF (@admin=0)
+BEGIN 
+	INSERT INTO #TMPDEPOT
+    SELECT	A.DE_No 
+    FROM	F_DEPOT A
+    LEFT JOIN Z_DEPOTUSER D 
+		ON A.DE_No=D.DE_No
+    WHERE	(1 = (SELECT CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No=@ProtNo) OR D.PROT_No =@ProtNo)
+    AND IsPrincipal = 1
+	AND (@DE_No = 0 OR A.DE_No = @DE_No) 
+    GROUP BY A.DE_No
+END
+ELSE 
+BEGIN
+	INSERT	INTO #TMPDEPOT 
+    SELECT DE_No 
+    FROM F_DEPOT 
+	WHERE (@DE_No = 0 OR DE_No = @DE_No) 
+END;
+
 WITH _Query_ AS (
 SELECT 	DE_No = CASE WHEN @rupture = 1 THEN A.DE_No ELSE '' END 
 		,DE_Intitule = CASE WHEN @rupture = 1 THEN DE_Intitule ELSE '' END 
@@ -47,9 +77,9 @@ SELECT 	DE_No = CASE WHEN @rupture = 1 THEN A.DE_No ELSE '' END
 						ON	A.AR_Ref=B.AR_Ref
                     INNER JOIN F_DEPOT C 
 						ON	A.DE_No=C.DE_No
-                    WHERE 	(0=@DE_No OR A.DE_No=@DE_No)
-                    AND 	(0=@AR_RefDebut OR a.AR_Ref&gt;=@AR_RefDebut)
-                    AND 	(0=@AR_RefFin OR a.AR_Ref&lt;=@AR_RefFin)
+                    WHERE 	A.DE_No IN (SELECT DE_No FROM #TMPDEPOT)
+                    AND 	('0'=@AR_RefDebut OR a.AR_Ref&gt;=@AR_RefDebut)
+                    AND 	('0'=@AR_RefFin OR a.AR_Ref&lt;=@AR_RefFin)
                     AND 	AS_QteMini&lt;&gt;0
 GROUP BY	CASE WHEN @rupture = 1 THEN A.DE_No ELSE '' END 
 			,CASE WHEN @rupture = 1 THEN DE_Intitule ELSE '' END 
@@ -388,7 +418,6 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                           </Style>
                         </Textbox>
                         <ColSpan>6</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -843,7 +872,9 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>AS_QteSto</rd:DefaultName>
@@ -894,7 +925,9 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>AS_QteMini</rd:DefaultName>
@@ -1110,7 +1143,9 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>TotCAHTNet1</rd:DefaultName>
@@ -1162,7 +1197,9 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>PRECOMPTE1</rd:DefaultName>
@@ -1214,7 +1251,9 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>TotCATTCNet1</rd:DefaultName>
@@ -1318,7 +1357,7 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Total</Value>
+                                  <Value>Total général</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1378,7 +1417,9 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>AS_QteSto1</rd:DefaultName>
@@ -1430,7 +1471,9 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>AS_QteMini1</rd:DefaultName>
@@ -1482,7 +1525,9 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>AS_QteMaxi1</rd:DefaultName>
@@ -1899,7 +1944,7 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
       <Hidden>true</Hidden>
     </ReportParameter>
     <ReportParameter Name="DateDebut">
-      <DataType>DateTime</DataType>
+      <DataType>String</DataType>
       <DefaultValue>
         <Values>
           <Value>=Today()</Value>
@@ -1909,7 +1954,7 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
       <Hidden>true</Hidden>
     </ReportParameter>
     <ReportParameter Name="DateFin">
-      <DataType>DateTime</DataType>
+      <DataType>String</DataType>
       <DefaultValue>
         <Values>
           <Value>=Today()</Value>

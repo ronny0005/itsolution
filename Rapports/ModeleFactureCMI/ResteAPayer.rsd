@@ -11,7 +11,8 @@
           <rd:DbType>Object</rd:DbType>
         </DataSetParameter>
       </DataSetParameters>
-      <CommandText>DECLARE @montantRegle as FLOAT
+      <CommandText>
+DECLARE @montantRegle as FLOAT
 DECLARE @avanceRegle as FLOAT
 DECLARE @resteAPayer as FLOAT
 DECLARE @regleFlag as tinyint
@@ -30,6 +31,7 @@ SELECT @regleFlag = DR_Regle
 FROM  F_DOCENTETE A
 INNER JOIN F_DOCREGL B ON A.DO_Domaine = B.DO_Domaine AND A.DO_Type = B.DO_Type AND A.DO_Piece = B.DO_Piece
 WHERE A.cbMarq = @cbMarq
+
 
 SELECT	@resteAPayer= ISNULL(@montantRegle,0) - ISNULL(@avanceRegle,0)
 

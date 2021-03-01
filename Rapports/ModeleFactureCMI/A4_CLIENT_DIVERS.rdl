@@ -520,7 +520,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=iif(First(Fields!DO_Domaine.Value, "Entete") = 0 And First(Fields!DO_Type.Value, "Entete") = 0, "Devis ", "Facture de vente ")</Value>
+                                  <Value>=iif(First(Fields!DO_Domaine.Value, "Entete") = 0 And First(Fields!DO_Type.Value, "Entete") = 0, "Devis ", iif(First(Fields!DO_Domaine.Value, "Entete") = 0 ,"Facture de vente ","Facture d'achat "))</Value>
                                   <Style>
                                     <FontFamily>arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -3078,7 +3078,7 @@
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>206575</Value>
+          <Value>267662</Value>
         </Values>
       </DefaultValue>
       <Prompt>cb Marq</Prompt>

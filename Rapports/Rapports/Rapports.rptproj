@@ -8,11 +8,11 @@
     <OverwriteDataSources>False</OverwriteDataSources>
     <TargetServerVersion>SSRS2016</TargetServerVersion>
     <Platform>Win32</Platform>
-    <TargetReportFolder>RapportINGENIOUS/Rapports</TargetReportFolder>
-    <TargetDatasetFolder>RapportINGENIOUS/Datasets</TargetDatasetFolder>
-    <TargetDatasourceFolder>RapportINGENIOUS/DataSources</TargetDatasourceFolder>
+    <TargetReportFolder>RapportCMI/Rapports</TargetReportFolder>
+    <TargetDatasetFolder>RapportCMI/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>RapportCMI/DataSources</TargetDatasourceFolder>
     <TargetReportPartFolder>Parties de rapports</TargetReportPartFolder>
-    <TargetServerURL>http://itsolution.ddns.net:1822/reportserver</TargetServerURL>
+    <TargetServerURL>http://localhost:1822/reportserver</TargetServerURL>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'DebugLocal' ">
     <FullPath>DebugLocal</FullPath>

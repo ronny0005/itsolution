@@ -38,7 +38,7 @@ DECLARE @ProtNo INT
 SET @ProtNo = @PROT_NoP;
 CREATE TABLE #TMPDEPOT (DE_No INT)
 			
-IF (SELECT CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE Prot_No=@ProtNo) = 1 
+IF (SELECT CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE Prot_No=@ProtNo) = 0
 BEGIN 
 INSERT INTO #TMPDEPOT
 	SELECT  A.DE_No
@@ -719,6 +719,7 @@ ORDER BY	CT_Intitule</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>

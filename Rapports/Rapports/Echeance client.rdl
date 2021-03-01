@@ -51,6 +51,9 @@
           <QueryParameter Name="@signeP">
             <Value>=Parameters!signe.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@protNoP">
+            <Value>=Parameters!PROT_No.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandText>DECLARE @type_reg AS VARCHAR(50)
 DECLARE @DateDebut AS VARCHAR(50)
@@ -81,7 +84,7 @@ SET @signe = @signeP
 CREATE TABLE #TMPDEPOT (DE_No INT)
 DECLARE @admin INT
 DECLARE @ProtNo INT
-SET @ProtNo = 20
+SET @ProtNo = @protNoP
 SELECT @admin = CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No = @ProtNo               
 IF (@admin=0)
 BEGIN 

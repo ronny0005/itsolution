@@ -17,19 +17,22 @@
           <QueryParameter Name="@PROT_NoP">
             <Value>=Parameters!PROT_No.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@artPresP">
+            <Value>=Parameters!ArticlePres.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandText>DECLARE @DE_No AS INT 
 		, @PROT_No AS INT
 		, @siteMarchand AS INT
 		, @admin INT
 		,@rupture INT
-		,@typeGroup INT;
+		,@typeGroup INT
+		,@artPres INT;
 CREATE TABLE #TMPDEPOT (DE_No INT)
-SET @DE_No = 0
+SET @DE_No = 0;
 SET @PROT_No = @PROT_NoP;
-
+SET @artPres = @artPresP;
 SELECT @admin = CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No = @PROT_No 
---DROP TABLE #TMPDEPOT;
 IF (@admin=0)
 BEGIN 
 	INSERT INTO #TMPDEPOT
@@ -85,19 +88,50 @@ INNER JOIN F_DEPOT fdep
 	ON fdep.DE_No=arts.DE_No
 INNER JOIN #TMPDEPOT tmpDep
 	ON tmpDep.DE_No = arts.DE_No
+WHERE fdep.DE_No NOT IN (SELECT DE_No FROM _ListMag_)
 )
-SELECT	qm.AR_Ref
-		,qm.AR_Design
-		,DE_NoMag = qm.DE_No
-		,DE_IntituleMag = qm.DE_Intitule
-		,AS_QteStoMag = qm.AS_QteSto
-		,qb.DE_No
-		,qb.DE_Intitule
-		,AS_QteSto = ISNULL(qb.AS_QteSto,0)
-FROM	_queryMag_ qm
-LEFT JOIN _queryBoutique_ qb
-	ON	qm.AR_Ref = qb.AR_Ref
-WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
+,_All_ AS (
+	SELECT	qm.AR_Ref
+			,qm.AR_Design
+			,DE_NoMag = qm.DE_No
+			,DE_IntituleMag = qm.DE_Intitule
+			,AS_QteStoMag = qm.AS_QteSto
+			,qb.DE_No
+			,qb.DE_Intitule
+			,AS_QteSto = ISNULL(qb.AS_QteSto,0)
+			,flag = CASE WHEN @artPres = 1 AND ISNULL(qb.AS_QteSto,0) &lt;=0 THEN 1
+					  WHEN @artPres = 0 AND ISNULL(qb.AS_QteSto,0) &gt; 0 THEN 1
+					  ELSE 0 END
+	FROM	_queryMag_ qm
+	LEFT JOIN _queryBoutique_ qb
+		ON	qm.AR_Ref = qb.AR_Ref
+	WHERE qm.AS_QteSto&lt;&gt;0
+	AND qb.DE_No IS NOT NULL
+)
+,_AddFlag_ AS (
+	SELECT	AR_Ref
+			,AR_Design
+			,DE_NoMag
+			,DE_IntituleMag
+			,AS_QteStoMag
+			,DE_No
+			,DE_Intitule
+			,AS_QteSto
+			,NbFlag = SUM(flag) OVER (PARTITION BY AR_Ref)
+			,Compte = COUNT(DE_No) OVER (PARTITION BY AR_Ref)
+	FROM	_All_
+)
+SELECT	AR_Ref
+		,AR_Design
+		,DE_NoMag
+		,DE_IntituleMag
+		,AS_QteStoMag
+		,DE_No
+		,DE_Intitule
+		,AS_QteSto
+		,NbFlag 
+		,Compte
+FROM _AddFlag_</CommandText>
       </Query>
       <Fields>
         <Field Name="AR_Ref">
@@ -131,6 +165,14 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
         <Field Name="AS_QteSto">
           <DataField>AS_QteSto</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="NbFlag">
+          <DataField>NbFlag</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Compte">
+          <DataField>Compte</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -347,7 +389,9 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>AS_QteSto</rd:DefaultName>
@@ -595,7 +639,9 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
                                         </Style>
                                       </TextRun>
                                     </TextRuns>
-                                    <Style />
+                                    <Style>
+                                      <TextAlign>Center</TextAlign>
+                                    </Style>
                                   </Paragraph>
                                 </Paragraphs>
                                 <rd:DefaultName>AS_QteStoMag1</rd:DefaultName>
@@ -625,7 +671,7 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
             <DataSetName>Requete</DataSetName>
             <Top>0.10583cm</Top>
             <Height>1.2cm</Height>
-            <Width>10.37042cm</Width>
+            <Width>10.37041cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -690,7 +736,7 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
                   </Paragraphs>
                   <rd:DefaultName>Textbox2</rd:DefaultName>
                   <Left>0.07963in</Left>
-                  <Height>0.62291in</Height>
+                  <Height>0.65069in</Height>
                   <Width>2.23287in</Width>
                   <Style>
                     <Border>
@@ -751,9 +797,8 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
                     </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox4</rd:DefaultName>
-                  <Top>0.02778in</Top>
                   <Left>5.54868in</Left>
-                  <Height>0.6368in</Height>
+                  <Height>0.66458in</Height>
                   <Width>1.97917in</Width>
                   <ZIndex>2</ZIndex>
                   <Style>
@@ -839,15 +884,21 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
     </ReportSection>
   </ReportSections>
   <ReportParameters>
-    <ReportParameter Name="PROT_No">
-      <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>20</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>ReportParameter1</Prompt>
-      <Hidden>true</Hidden>
+    <ReportParameter Name="ArticlePres">
+      <DataType>Integer</DataType>
+      <Prompt>Article présent</Prompt>
+      <ValidValues>
+        <ParameterValues>
+          <ParameterValue>
+            <Value>1</Value>
+            <Label>Oui</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>0</Value>
+            <Label>Non</Label>
+          </ParameterValue>
+        </ParameterValues>
+      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="DateDebut">
       <DataType>String</DataType>
@@ -869,6 +920,16 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
       <Prompt>fin : </Prompt>
       <Hidden>true</Hidden>
     </ReportParameter>
+    <ReportParameter Name="PROT_No">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>20</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>ReportParameter1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -876,19 +937,24 @@ WHERE qm.AS_QteSto&lt;&gt;0</CommandText>
       <NumberOfRows>4</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
-          <ColumnIndex>3</ColumnIndex>
-          <RowIndex>2</RowIndex>
-          <ParameterName>PROT_No</ParameterName>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>ArticlePres</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>3</RowIndex>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
           <ParameterName>DateDebut</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
-          <RowIndex>3</RowIndex>
+          <RowIndex>1</RowIndex>
           <ParameterName>DateFin</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>PROT_No</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>
