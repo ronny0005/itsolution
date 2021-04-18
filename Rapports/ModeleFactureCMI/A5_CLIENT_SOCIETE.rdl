@@ -2017,7 +2017,7 @@ Imprimé par :</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>T.V.A.</Value>
+                                  <Value>T.V.A. (19,25%)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -2980,7 +2980,7 @@ Imprimé par :</Value>
                     </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox12</rd:DefaultName>
-                  <Top>0.64818cm</Top>
+                  <Top>0.72764cm</Top>
                   <Left>1.45084cm</Left>
                   <Height>0.52207cm</Height>
                   <Width>15.99667cm</Width>

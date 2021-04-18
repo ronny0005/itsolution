@@ -27,8 +27,10 @@
 		, @admin INT
 		,@rupture INT
 		,@typeGroup INT
+		,@countDepot INT
 		,@artPres INT;
 CREATE TABLE #TMPDEPOT (DE_No INT)
+CREATE TABLE #ListMag (DE_No INT,DE_Intitule NVARCHAR(50));
 SET @DE_No = 0;
 SET @PROT_No = @PROT_NoP;
 SET @artPres = @artPresP;
@@ -51,24 +53,29 @@ BEGIN
 	SELECT  DE_No 
 	FROM    F_DEPOT 
 	WHERE   (@DE_No='0' OR @DE_No=DE_No)
-
 END ;
 
-WITH _ListMag_ AS (
+INSERT INTO #ListMag
 SELECT	TOP 1 
 		DE_No
 		,DE_Intitule
 FROM	F_DEPOT
-WHERE	DE_Intitule LIKE '%MAGASIN%'
-)
-,_queryMag_ AS (
+WHERE	DE_Intitule LIKE '%MAGASIN%';
+
+	SELECT @countDepot = COUNT(1)
+	FROM #TMPDEPOT
+	WHERE DE_No IN(
+	SELECT DISTINCT DE_No
+	FROM F_ARTSTOCK)
+	AND DE_No NOT IN (SELECT DE_No FROM #ListMag);
+WITH _queryMag_ AS (
 SELECT	arts.AR_Ref
 		,fart.AR_Design
 		,arts.AS_QteSto
 		,arts.DE_No
 		,fdep.DE_Intitule
 FROM	F_ARTSTOCK arts
-INNER JOIN _ListMag_ listm
+INNER JOIN #ListMag listm
 	ON arts.DE_No = listm.DE_No
 INNER JOIN F_ARTICLE fart
 	ON fart.AR_Ref=arts.AR_Ref
@@ -88,7 +95,7 @@ INNER JOIN F_DEPOT fdep
 	ON fdep.DE_No=arts.DE_No
 INNER JOIN #TMPDEPOT tmpDep
 	ON tmpDep.DE_No = arts.DE_No
-WHERE fdep.DE_No NOT IN (SELECT DE_No FROM _ListMag_)
+WHERE fdep.DE_No NOT IN (SELECT DE_No FROM #ListMag)
 )
 ,_All_ AS (
 	SELECT	qm.AR_Ref
@@ -99,8 +106,8 @@ WHERE fdep.DE_No NOT IN (SELECT DE_No FROM _ListMag_)
 			,qb.DE_No
 			,qb.DE_Intitule
 			,AS_QteSto = ISNULL(qb.AS_QteSto,0)
-			,flag = CASE WHEN @artPres = 1 AND ISNULL(qb.AS_QteSto,0) &lt;=0 THEN 1
-					  WHEN @artPres = 0 AND ISNULL(qb.AS_QteSto,0) &gt; 0 THEN 1
+			,flag = CASE WHEN @artPres = 0 AND ISNULL(qb.AS_QteSto,0) &lt;=0 THEN 1
+					  WHEN @artPres = 1 AND ISNULL(qb.AS_QteSto,0) &gt; 0 THEN 1
 					  ELSE 0 END
 	FROM	_queryMag_ qm
 	LEFT JOIN _queryBoutique_ qb
@@ -118,7 +125,7 @@ WHERE fdep.DE_No NOT IN (SELECT DE_No FROM _ListMag_)
 			,DE_Intitule
 			,AS_QteSto
 			,NbFlag = SUM(flag) OVER (PARTITION BY AR_Ref)
-			,Compte = COUNT(DE_No) OVER (PARTITION BY AR_Ref)
+			,Compte = @countDepot
 	FROM	_All_
 )
 SELECT	AR_Ref
@@ -131,7 +138,9 @@ SELECT	AR_Ref
 		,AS_QteSto
 		,NbFlag 
 		,Compte
-FROM _AddFlag_</CommandText>
+FROM	_AddFlag_
+WHERE	CASE WHEN @artPres = 0 AND NbFlag = Compte THEN 1 
+				WHEN @artPres = 1 THEN 1 ELSE 0 END = 1</CommandText>
       </Query>
       <Fields>
         <Field Name="AR_Ref">

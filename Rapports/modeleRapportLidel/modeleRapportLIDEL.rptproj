@@ -8,9 +8,9 @@
     <OverwriteDataSources>False</OverwriteDataSources>
     <TargetServerVersion>SSRS2016</TargetServerVersion>
     <Platform>Win32</Platform>
-    <TargetReportFolder>MFCMI/Reports</TargetReportFolder>
-    <TargetDatasetFolder>MFCMI/Datasets</TargetDatasetFolder>
-    <TargetDatasourceFolder>MFCMI/Datasources</TargetDatasourceFolder>
+    <TargetReportFolder>MFLIDEL/Reports</TargetReportFolder>
+    <TargetDatasetFolder>MFLIDEL/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>MFLIDEL/DataSources</TargetDatasourceFolder>
     <TargetReportPartFolder>Parties de rapports</TargetReportPartFolder>
     <TargetServerURL>http://itsolution.ddns.net:1822/reportserver</TargetServerURL>
   </PropertyGroup>
@@ -22,7 +22,7 @@
     <OverwriteDataSources>False</OverwriteDataSources>
     <TargetServerVersion>SSRS2016</TargetServerVersion>
     <Platform>Win32</Platform>
-    <TargetReportFolder>ModeleFactureCMI</TargetReportFolder>
+    <TargetReportFolder>modeleRapportLIDEL</TargetReportFolder>
     <TargetDatasetFolder>Datasets</TargetDatasetFolder>
     <TargetDatasourceFolder>Sources de données</TargetDatasourceFolder>
     <TargetReportPartFolder>Parties de rapports</TargetReportPartFolder>
@@ -36,7 +36,7 @@
     <OverwriteDataSources>False</OverwriteDataSources>
     <TargetServerVersion>SSRS2016</TargetServerVersion>
     <Platform>Win32</Platform>
-    <TargetReportFolder>ModeleFactureCMI</TargetReportFolder>
+    <TargetReportFolder>modeleRapportLIDEL</TargetReportFolder>
     <TargetDatasetFolder>Datasets</TargetDatasetFolder>
     <TargetDatasourceFolder>Sources de données</TargetDatasourceFolder>
     <TargetReportPartFolder>Parties de rapports</TargetReportPartFolder>
@@ -61,13 +61,9 @@
     <DataSource Include="DataSource.rds" />
   </ItemGroup>
   <ItemGroup>
-    <Report Include="A4_CLIENT_DIVERS.rdl" />
-    <Report Include="A4_CLIENT_SOCIETE.rdl" />
-    <Report Include="A4_PROFORMA.rdl" />
-    <Report Include="A5_CLIENT_DIVERS.rdl" />
-    <Report Include="A5_CLIENT_SOCIETE.rdl" />
-    <Report Include="A5_CLIENT_SOCIETE_2.rdl" />
-    <Report Include="A5_PROFORMA.rdl" />
+    <Report Include="A4_FACTURE.rdl" />
+    <Report Include="A5_FACTURE.rdl" />
+    <Report Include="TICKET.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
 </Project>

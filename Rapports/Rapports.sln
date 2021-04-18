@@ -23,6 +23,8 @@ Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "modeleFactureSODIPROVET", "
 EndProject
 Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "modeleFactureIngenious", "modeleFactureIngenious\modeleFactureIngenious.rptproj", "{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}"
 EndProject
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "modeleRapportLIDEL", "modeleRapportLidel\modeleRapportLIDEL.rptproj", "{5844C066-7EB9-4C12-BA74-4A36472F5A02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Default = Debug|Default
@@ -132,6 +134,18 @@ Global
 		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Release|Default.ActiveCfg = Release
 		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Release|Default.Build.0 = Release
 		{99AB2E22-9C90-42F3-92FE-4E8FA15EC1CC}.Release|Default.Deploy.0 = Release
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Debug|Default.ActiveCfg = Debug
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Debug|Default.Build.0 = Debug
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Debug|Default.Deploy.0 = Debug
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.DebugLocal|Default.ActiveCfg = DebugLocal
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.DebugLocal|Default.Build.0 = DebugLocal
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.DebugLocal|Default.Deploy.0 = DebugLocal
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Development|Default.ActiveCfg = 
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Development|Default.Build.0 = 
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Development|Default.Deploy.0 = 
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Release|Default.ActiveCfg = Release
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Release|Default.Build.0 = Release
+		{5844C066-7EB9-4C12-BA74-4A36472F5A02}.Release|Default.Deploy.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

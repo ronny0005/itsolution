@@ -23,22 +23,32 @@
           <QueryParameter Name="@de_noP">
             <Value>=Parameters!Agence.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@ctNumDebutP">
+            <Value>=Parameters!ClientDebut.Value</Value>
+          </QueryParameter>
           <QueryParameter Name="@PROT_NoP">
             <Value>=Parameters!PROT_No.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@ctNumFinP">
+            <Value>=Parameters!ClientFin.Value</Value>
           </QueryParameter>
         </QueryParameters>
         <CommandText>declare @dt_deb as varchar(20)
 declare @dt_fin as varchar(20)
 declare @de_no as int
+declare @ctNumDebut as NVARCHAR(50)
+declare @ctNumFin as NVARCHAR(50)
 set @dt_deb=@dt_debP
 set @dt_fin=@dt_finP
 set @de_no=@de_noP
 DECLARE @admin INT
 DECLARE @ProtNo INT
+SET @ctNumDebut =@ctNumDebutP
+SET @ctNumFin =@ctNumFinP
 SET @ProtNo = @PROT_NoP;
 CREATE TABLE #TMPDEPOT (DE_No INT)
 			
-IF (SELECT CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE Prot_No=@ProtNo) = 0
+/*IF (SELECT CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE Prot_No=@ProtNo) = 0
 BEGIN 
 INSERT INTO #TMPDEPOT
 	SELECT  A.DE_No
@@ -51,29 +61,34 @@ INSERT INTO #TMPDEPOT
 	GROUP BY A.DE_No 
 END 
 ELSE 
-BEGIN 
+BEGIN */
 	INSERT INTO #TMPDEPOT
 	SELECT	DE_No
-	FROM	F_DEPOT
-END;
+	FROM	F_DEPOT;
+/*END;*/
 
 WITH _Ligne_ AS (
-	SELECT	DO_Domaine,DO_Type,DO_Piece,CT_Num,DE_No,DO_Date, SUM(DL_MontantTTC) DL_MontantTTC 
-	FROM	F_DOCLIGNE 
-	GROUP BY DO_Domaine,DO_Type,DO_Piece,CT_Num,DE_No,DO_Date
-)
+                    SELECT  ent.DO_Domaine,ent.DO_Provenance,ent.DO_Type,ent.cbDO_Piece,ent.DO_Piece,cbDO_Tiers,ent.DO_Tiers,ent.DE_No,ent.DO_Date, SUM(DL_MontantTTC) DL_MontantTTC 
+                    FROM    F_DOCENTETE ent
+                    INNER JOIN F_DOCLIGNE lig
+                        ON  ent.DO_Domaine=lig.DO_Domaine
+                        AND ent.DO_Type = lig.DO_Type
+                        AND ent.cbDO_Piece = lig.cbDO_Piece 
+                    GROUP BY ent.DO_Domaine,ent.DO_Provenance,ent.DO_Type,ent.cbDO_Piece,ent.DO_Piece,ent.cbDO_Tiers,ent.DO_Tiers,ent.DE_No,ent.DO_Date)
 , _Regle_ AS (
-	SELECT	DO_Piece,DO_Domaine,DO_Type, SUM(RC_Montant) RC_Montant 
+	SELECT	DO_Piece,DO_Domaine,DO_Type, RC_Montant = SUM(RC_Montant)  
 	FROM	F_REGLECH
 	GROUP BY DO_Piece,DO_Domaine,DO_Type
 )
-SELECT	L.DE_No,DE_Intitule, L.CT_Num,CT_Intitule
-		,ISNULL(SUM(RC_Montant),0)RC_Montant
-		,SUM(DL_MontantTTC)DL_MontantTTC
-		,ISNULL(SUM(RC_Montant),0)-SUM(DL_MontantTTC) AS MONTANT  
+SELECT	L.DE_No,DE_Intitule
+		,CT_Num = L.DO_Tiers,CT_Intitule,L.DO_Piece
+		,L.DO_Date
+		,RC_Montant = ISNULL(SUM(RC_Montant),0)
+		,DL_MontantTTC = SUM(DL_MontantTTC)
+		,MONTANT = ISNULL(SUM(RC_Montant),0)-SUM(DL_MontantTTC)
 FROM	_Ligne_ L
 INNER JOIN 	F_COMPTET C 
-	ON	L.CT_NUM = C.CT_Num
+	ON	L.DO_Tiers = C.CT_Num
 INNER JOIN	F_DOCREGL D 
 	ON	L.DO_Piece=D.DO_Piece 
 	AND DR_Regle = 0
@@ -83,10 +98,13 @@ LEFT JOIN _Regle_ RE
 	AND L.DO_Type=RE.DO_Type
 INNER JOIN  F_DEPOT DE 
 	ON	L.DE_No = DE.DE_No
-WHERE	L.DO_Type = 6
-AND		l.DO_Date &gt;= @dt_deb AND l.DO_Date&lt;= @dt_fin 
+WHERE	L.DO_Type IN (6,7)
+AND		l.DO_Date &gt;= @dt_deb AND l.DO_Date&lt;= @dt_fin
+
+AND		(@ctNumDebut='0' OR L.DO_Tiers&gt;= @ctNumDebut)  
+AND		(@ctNumFin='0' OR L.DO_Tiers&lt;= @ctNumFin)  
 AND		((0=@de_no AND L.DE_No IN (SELECT DE_No FROM #TMPDEPOT)) OR L.DE_No = @de_no)
-GROUP BY	L.DE_No,DE_Intitule, L.CT_NUM,CT_Intitule 
+GROUP BY	L.DE_No,DE_Intitule, L.DO_Tiers,CT_Intitule,L.DO_Piece,L.DO_Date
 ORDER BY	CT_Intitule</CommandText>
       </Query>
       <Fields>
@@ -106,9 +124,17 @@ ORDER BY	CT_Intitule</CommandText>
           <DataField>CT_Intitule</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="DO_Piece">
+          <DataField>DO_Piece</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="RC_Montant">
           <DataField>RC_Montant</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DO_Date">
+          <DataField>DO_Date</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
         <Field Name="DL_MontantTTC">
           <DataField>DL_MontantTTC</DataField>
@@ -140,114 +166,22 @@ ORDER BY	CT_Intitule</CommandText>
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>2.05903in</Width>
+                  <Width>1.44966in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>3.21188in</Width>
+                  <Width>1.4098in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.59895in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.57986in</Width>
                 </TablixColumn>
+                <TablixColumn>
+                  <Width>1.36458in</Width>
+                </TablixColumn>
               </TablixColumns>
               <TablixRows>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox99">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox99</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox100">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox100</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox102">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox102</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
                 <TablixRow>
                   <Height>0.25in</Height>
                   <TablixCells>
@@ -296,102 +230,13 @@ ORDER BY	CT_Intitule</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <ColSpan>5</ColSpan>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox7">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox7</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>Black</Color>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <LeftBorder>
-                              <Color>Black</Color>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Color>Black</Color>
-                              <Width>1pt</Width>
-                            </RightBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox9">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox9</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>Black</Color>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <LeftBorder>
-                              <Color>Black</Color>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Color>Black</Color>
-                              <Width>1pt</Width>
-                            </RightBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -446,9 +291,11 @@ ORDER BY	CT_Intitule</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>3</ColSpan>
+                        <ColSpan>5</ColSpan>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
                     <TablixCell />
                     <TablixCell />
                   </TablixCells>
@@ -479,26 +326,6 @@ ORDER BY	CT_Intitule</CommandText>
                             <Border>
                               <Style>Solid</Style>
                             </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <LeftBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </RightBorder>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -556,11 +383,14 @@ ORDER BY	CT_Intitule</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <ColSpan>3</ColSpan>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox11">
+                        <Textbox Name="Textbox15">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -625,8 +455,7 @@ ORDER BY	CT_Intitule</CommandText>
                                 <TextRun>
                                   <Value>=Fields!CT_Num.Value</Value>
                                   <Style>
-                                    <TextDecoration>Underline</TextDecoration>
-                                    <Color>Blue</Color>
+                                    <TextDecoration>None</TextDecoration>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -634,32 +463,6 @@ ORDER BY	CT_Intitule</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>CT_Num</rd:DefaultName>
-                          <ActionInfo>
-                            <Actions>
-                              <Action>
-                                <Drillthrough>
-                                  <ReportName>Etat des dettes detail</ReportName>
-                                  <Parameters>
-                                    <Parameter Name="DateDebut">
-                                      <Value>=Parameters!DateDebut.Value</Value>
-                                    </Parameter>
-                                    <Parameter Name="DateFin">
-                                      <Value>=Parameters!DateFin.Value</Value>
-                                    </Parameter>
-                                    <Parameter Name="Agence">
-                                      <Value>=Parameters!Agence.Value</Value>
-                                    </Parameter>
-                                    <Parameter Name="client">
-                                      <Value>=Fields!CT_Num.Value</Value>
-                                    </Parameter>
-                                    <Parameter Name="libelleClient">
-                                      <Value>=Fields!CT_Intitule.Value</Value>
-                                    </Parameter>
-                                  </Parameters>
-                                </Drillthrough>
-                              </Action>
-                            </Actions>
-                          </ActionInfo>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -719,9 +522,11 @@ ORDER BY	CT_Intitule</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
+                        <ColSpan>3</ColSpan>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="MONTANT2">
@@ -731,14 +536,14 @@ ORDER BY	CT_Intitule</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!MONTANT.Value</Value>
+                                  <Value>=Sum(Fields!MONTANT.Value)</Value>
                                   <Style>
                                     <Format>N</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -762,6 +567,192 @@ ORDER BY	CT_Intitule</CommandText>
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="CT_Intitule2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!DO_Piece.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <ListLevel>1</ListLevel>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>CT_Intitule</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="DO_Date2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatDateTime(Fields!DO_Date.Value, Microsoft.VisualBasic.DateFormat.ShortDate)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>DO_Date</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="DL_MontantTTC">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!DL_MontantTTC.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>DL_MontantTTC</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="RC_Montant">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!RC_Montant.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>RC_Montant</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="MONTANT">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!MONTANT.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>MONTANT</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
                             <RightBorder>
                               <Color>Black</Color>
                               <Style>Solid</Style>
@@ -832,9 +823,11 @@ ORDER BY	CT_Intitule</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>2</ColSpan>
+                        <ColSpan>4</ColSpan>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
                     <TablixCell />
                     <TablixCell>
                       <CellContents>
@@ -853,7 +846,7 @@ ORDER BY	CT_Intitule</CommandText>
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -900,11 +893,12 @@ ORDER BY	CT_Intitule</CommandText>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
               <TablixMembers>
-                <TablixMember />
                 <TablixMember>
                   <Group Name="DE_No">
                     <GroupExpressions>
@@ -917,29 +911,48 @@ ORDER BY	CT_Intitule</CommandText>
                     </SortExpression>
                   </SortExpressions>
                   <TablixMembers>
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
                     <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
+                      <Group Name="CT_Num">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!CT_Num.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <TablixMembers>
+                        <TablixMember />
+                        <TablixMember>
+                          <TablixMembers>
+                            <TablixMember>
+                              <Group Name="DO_Piece">
+                                <GroupExpressions>
+                                  <GroupExpression>=Fields!DO_Piece.Value</GroupExpression>
+                                </GroupExpressions>
+                              </Group>
+                              <SortExpressions>
+                                <SortExpression>
+                                  <Value>=Fields!DO_Date.Value</Value>
+                                </SortExpression>
+                              </SortExpressions>
+                            </TablixMember>
+                          </TablixMembers>
+                          <Visibility>
+                            <Hidden>=Not(Parameters!ToutAfficher.Value)</Hidden>
+                            <ToggleItem>CT_Num</ToggleItem>
+                          </Visibility>
+                        </TablixMember>
+                      </TablixMembers>
                     </TablixMember>
-                    <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
-                    </TablixMember>
-                    <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
-                    </TablixMember>
-                    <TablixMember>
-                      <Group Name="Details" />
-                    </TablixMember>
-                    <TablixMember>
-                      <KeepWithGroup>Before</KeepWithGroup>
-                    </TablixMember>
+                    <TablixMember />
                   </TablixMembers>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Requete</DataSetName>
-            <Left>0.76729cm</Left>
+            <Top>0.03528cm</Top>
             <Height>1.60417in</Height>
-            <Width>6.85077in</Width>
+            <Width>7.40285in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -947,13 +960,13 @@ ORDER BY	CT_Intitule</CommandText>
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>1.60417in</Height>
+        <Height>4.10987cm</Height>
         <Style />
       </Body>
-      <Width>7.52785in</Width>
+      <Width>18.80324cm</Width>
       <Page>
         <PageHeader>
-          <Height>1.18402in</Height>
+          <Height>3.00741cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -980,7 +993,7 @@ ORDER BY	CT_Intitule</CommandText>
               </Paragraphs>
               <rd:DefaultName>textbox1</rd:DefaultName>
               <Height>0.43in</Height>
-              <Width>7.52785in</Width>
+              <Width>7.40285in</Width>
               <Visibility>
                 <Hidden>=NOT(Globals!RenderFormat.IsInteractive)</Hidden>
               </Visibility>
@@ -1042,8 +1055,7 @@ ORDER BY	CT_Intitule</CommandText>
                     </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox2</rd:DefaultName>
-                  <Left>0.07963in</Left>
-                  <Height>0.62291in</Height>
+                  <Height>0.66458in</Height>
                   <Width>2.23287in</Width>
                   <Style>
                     <Border>
@@ -1075,9 +1087,9 @@ ORDER BY	CT_Intitule</CommandText>
                     </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox3</rd:DefaultName>
-                  <Left>2.38194in</Left>
+                  <Left>2.27454in</Left>
                   <Height>0.3654in</Height>
-                  <Width>2.98263in</Width>
+                  <Width>3.09003in</Width>
                   <ZIndex>1</ZIndex>
                   <Style>
                     <Border>
@@ -1132,8 +1144,7 @@ ORDER BY	CT_Intitule</CommandText>
                     </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox4</rd:DefaultName>
-                  <Top>0.02778in</Top>
-                  <Left>5.54868in</Left>
+                  <Left>5.42368in</Left>
                   <Height>0.6368in</Height>
                   <Width>1.97917in</Width>
                   <ZIndex>2</ZIndex>
@@ -1151,7 +1162,7 @@ ORDER BY	CT_Intitule</CommandText>
               <KeepTogether>true</KeepTogether>
               <Top>0.51944in</Top>
               <Height>0.66458in</Height>
-              <Width>19.12074cm</Width>
+              <Width>18.80324cm</Width>
               <ZIndex>1</ZIndex>
               <Visibility>
                 <Hidden>=Globals!RenderFormat.IsInteractive</Hidden>
@@ -1169,10 +1180,13 @@ ORDER BY	CT_Intitule</CommandText>
             </Border>
           </Style>
         </PageHeader>
-        <LeftMargin>1in</LeftMargin>
-        <RightMargin>1in</RightMargin>
-        <TopMargin>1in</TopMargin>
-        <BottomMargin>1in</BottomMargin>
+        <PageHeight>27.94cm</PageHeight>
+        <PageWidth>21.59cm</PageWidth>
+        <LeftMargin>0.5cm</LeftMargin>
+        <RightMargin>0.5cm</RightMargin>
+        <TopMargin>0.5cm</TopMargin>
+        <BottomMargin>0.5cm</BottomMargin>
+        <ColumnSpacing>1.27cm</ColumnSpacing>
         <Style />
       </Page>
     </ReportSection>
@@ -1196,6 +1210,24 @@ ORDER BY	CT_Intitule</CommandText>
       </DefaultValue>
       <Prompt>à :</Prompt>
     </ReportParameter>
+    <ReportParameter Name="ClientDebut">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Client de</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ClientFin">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>à</Prompt>
+    </ReportParameter>
     <ReportParameter Name="Agence">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -1204,6 +1236,27 @@ ORDER BY	CT_Intitule</CommandText>
         </Values>
       </DefaultValue>
       <Prompt>Agence</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ToutAfficher">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Afficher</Prompt>
+      <ValidValues>
+        <ParameterValues>
+          <ParameterValue>
+            <Value>true</Value>
+            <Label>Oui</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>false</Value>
+            <Label>Non</Label>
+          </ParameterValue>
+        </ParameterValues>
+      </ValidValues>
     </ReportParameter>
     <ReportParameter Name="PROT_No">
       <DataType>String</DataType>
@@ -1234,11 +1287,26 @@ ORDER BY	CT_Intitule</CommandText>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>1</RowIndex>
-          <ParameterName>Agence</ParameterName>
+          <ParameterName>ClientDebut</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>1</RowIndex>
+          <ParameterName>ClientFin</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>Agence</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>ToutAfficher</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
           <ParameterName>PROT_No</ParameterName>
         </CellDefinition>
       </CellDefinitions>
@@ -1246,6 +1314,6 @@ ORDER BY	CT_Intitule</CommandText>
   </ReportParametersLayout>
   <Language>fr-FR</Language>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
-  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>9ac35002-28c0-459c-b27a-39e9904ac770</rd:ReportID>
 </Report>

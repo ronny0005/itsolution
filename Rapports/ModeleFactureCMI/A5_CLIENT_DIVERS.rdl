@@ -2610,7 +2610,7 @@ Imprimé par :</Value>
                   </Paragraphs>
                   <rd:DefaultName>Textbox1</rd:DefaultName>
                   <Left>1.50405cm</Left>
-                  <Height>0.69237cm</Height>
+                  <Height>0.65709cm</Height>
                   <Width>4.41446cm</Width>
                   <ZIndex>1</ZIndex>
                   <Style>
@@ -2642,7 +2642,7 @@ Imprimé par :</Value>
                     </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox12</rd:DefaultName>
-                  <Top>0.64818cm</Top>
+                  <Top>0.72764cm</Top>
                   <Left>1.45084cm</Left>
                   <Height>0.52207cm</Height>
                   <Width>15.99667cm</Width>
@@ -2866,6 +2866,7 @@ Imprimé par :</Value>
                 </Textbox>
               </ReportItems>
               <KeepTogether>true</KeepTogether>
+              <Top>-0.00001cm</Top>
               <Left>1.97814cm</Left>
               <Height>1.68375cm</Height>
               <Width>15.87191cm</Width>
@@ -2909,7 +2910,7 @@ Imprimé par :</Value>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox4</rd:DefaultName>
-              <Top>0.54185cm</Top>
+              <Top>0.54184cm</Top>
               <Height>0.6cm</Height>
               <Width>1.46626cm</Width>
               <ZIndex>1</ZIndex>

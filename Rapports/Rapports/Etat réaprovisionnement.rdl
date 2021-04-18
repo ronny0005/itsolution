@@ -26,7 +26,7 @@
           <QueryParameter Name="@articleFin">
             <Value>=Parameters!ArticleFin.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@rupture">
+          <QueryParameter Name="@ruptureP">
             <Value>=Parameters!rupture.Value</Value>
           </QueryParameter>
         </QueryParameters>
@@ -35,12 +35,14 @@ DECLARE @AR_RefDebut AS VARCHAR(30)
 DECLARE @AR_RefFin AS VARCHAR(30)
 DECLARE @ProtNo AS INT
 DECLARE @admin AS INT
+DECLARE @rupture AS INT
 CREATE TABLE #TMPDEPOT (DE_No INT)
 
 SET @ProtNo=@ProtNoP
 SET @DE_No=@agence
 SET @AR_RefDebut=@articleDebut
-SET @AR_RefFin=@articleFin;
+SET @AR_RefFin=@articleFin
+SET @rupture = @ruptureP;
 
 SELECT @admin = CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No = @ProtNo               
 IF (@admin=0)
@@ -63,33 +65,51 @@ BEGIN
 	WHERE (@DE_No = 0 OR DE_No = @DE_No) 
 END;
 
-WITH _Query_ AS (
+WITH _Mag_ AS (
+SELECT	DE_No
+FROM	F_DEPOT 
+WHERE	DE_Intitule LIKE '%MAG%'
+)
+,_StockMag_ AS (
+	SELECT	AR_Ref
+			,AS_QteMag = SUM(AS_QteSto)
+	FROM 	F_ARTSTOCK
+	WHERE   DE_No IN (SELECT DE_No FROM _Mag_)
+	GROUP BY AR_Ref
+)
+,_Query_ AS (
 SELECT 	DE_No = CASE WHEN @rupture = 1 THEN A.DE_No ELSE '' END 
 		,DE_Intitule = CASE WHEN @rupture = 1 THEN DE_Intitule ELSE '' END 
 		,a.AR_Ref
 		,AR_Design
-		,AS_QteSto = SUM(AS_QteSto) 
-		,AS_QteMini = SUM(AS_QteMini)
-		,AS_QteMaxi = SUM(AS_QteMaxi)
-		,QteCommande = SUM(AS_QteMini - AS_QteSto)
+		,AS_QteSto = SUM(A.AS_QteSto) 
+		,AS_QteMini = SUM(A.AS_QteMini)
+		,AS_QteMaxi = SUM(A.AS_QteMaxi)
+		,QteCommande = SUM(A.AS_QteMini - A.AS_QteSto)
+		,AS_QteMag = SUM (sm.AS_QteMag)
                     FROM 	F_ARTSTOCK A
                     INNER JOIN F_ARTICLE B 
 						ON	A.AR_Ref=B.AR_Ref
                     INNER JOIN F_DEPOT C 
 						ON	A.DE_No=C.DE_No
+					LEFT JOIN _StockMag_ sm 
+						ON	sm.AR_Ref = A.AR_Ref 
                     WHERE 	A.DE_No IN (SELECT DE_No FROM #TMPDEPOT)
                     AND 	('0'=@AR_RefDebut OR a.AR_Ref&gt;=@AR_RefDebut)
                     AND 	('0'=@AR_RefFin OR a.AR_Ref&lt;=@AR_RefFin)
                     AND 	AS_QteMini&lt;&gt;0
+					AND		A.DE_No NOT IN (SELECT DE_No FROM _Mag_)
 GROUP BY	CASE WHEN @rupture = 1 THEN A.DE_No ELSE '' END 
 			,CASE WHEN @rupture = 1 THEN DE_Intitule ELSE '' END 
 			,a.AR_Ref
 			,AR_Design
 )
+
 SELECT	DE_No
 		,DE_Intitule
 		,AR_Ref
 		,AR_Design
+		,AS_QteMag
 		,AS_QteSto
 		,AS_QteMini
 		,AS_QteMaxi
@@ -112,6 +132,10 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
         </Field>
         <Field Name="AS_QteMini">
           <DataField>AS_QteMini</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="AS_QteMag">
+          <DataField>AS_QteMag</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="AS_QteMaxi">
@@ -158,16 +182,19 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                   <Width>5.72085cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.71824cm</Width>
+                  <Width>2.18907cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.71824cm</Width>
+                  <Width>2.18907cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.71824cm</Width>
+                  <Width>2.18907cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.71824cm</Width>
+                  <Width>2.11668cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.18907cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -360,6 +387,37 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox16">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox16</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -417,9 +475,10 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>6</ColSpan>
+                        <ColSpan>7</ColSpan>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell />
                     <TablixCell />
                     <TablixCell />
                     <TablixCell />
@@ -721,6 +780,60 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox14</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <BackgroundColor>Gainsboro</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox7">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Qtés magasin</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox7</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1069,6 +1182,59 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="AS_QteMag">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!AS_QteMag.Value</Value>
+                                  <Style>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>AS_QteMag</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -1311,6 +1477,60 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox21</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!AS_QteMag.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox11</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1617,12 +1837,67 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="AS_QteMag1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!AS_QteMag.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>AS_QteMag1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -1683,7 +1958,7 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>4.07459cm</Height>
+        <Height>4.0746cm</Height>
         <Style />
       </Body>
       <Width>20.00001cm</Width>
@@ -1910,6 +2185,11 @@ WHERE	AS_QteSto&lt;AS_QteMini</CommandText>
     </ReportParameter>
     <ReportParameter Name="Agence">
       <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Agence</Prompt>
     </ReportParameter>
     <ReportParameter Name="rupture">

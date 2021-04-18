@@ -2379,7 +2379,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>T.V.A.</Value>
+                                  <Value>T.V.A. (19,25%)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -3081,7 +3081,7 @@
                   </Paragraphs>
                   <rd:DefaultName>Textbox1</rd:DefaultName>
                   <Left>1.50405cm</Left>
-                  <Height>0.69237cm</Height>
+                  <Height>0.65709cm</Height>
                   <Width>4.41446cm</Width>
                   <ZIndex>1</ZIndex>
                   <Style>
@@ -3113,7 +3113,7 @@
                     </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox12</rd:DefaultName>
-                  <Top>0.64818cm</Top>
+                  <Top>0.72764cm</Top>
                   <Left>1.45084cm</Left>
                   <Height>0.52207cm</Height>
                   <Width>15.99667cm</Width>
@@ -3382,6 +3382,7 @@
                 </Textbox>
               </ReportItems>
               <KeepTogether>true</KeepTogether>
+              <Top>0cm</Top>
               <Left>1.74655cm</Left>
               <Height>1.68375cm</Height>
               <Width>15.87191cm</Width>
