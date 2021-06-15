@@ -2597,7 +2597,11 @@ Imprimé par :</Value>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
               <TablixMembers>
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=NOT(First(Fields!DO_Domaine.Value, "Entete") = 0 AND First(Fields!DO_Type.Value, "Entete") = 0)</Hidden>
+                  </Visibility>
+                </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>ResteAPayer</DataSetName>

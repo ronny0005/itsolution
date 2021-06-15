@@ -4,7 +4,7 @@
     <FullPath>Debug</FullPath>
     <OutputPath>bin\Debug</OutputPath>
     <ErrorLevel>2</ErrorLevel>
-    <OverwriteDatasets>False</OverwriteDatasets>
+    <OverwriteDatasets>True</OverwriteDatasets>
     <OverwriteDataSources>False</OverwriteDataSources>
     <TargetServerVersion>SSRS2016</TargetServerVersion>
     <Platform>Win32</Platform>
@@ -12,7 +12,7 @@
     <TargetDatasetFolder>MFCMI/Datasets</TargetDatasetFolder>
     <TargetDatasourceFolder>MFCMI/Datasources</TargetDatasourceFolder>
     <TargetReportPartFolder>Parties de rapports</TargetReportPartFolder>
-    <TargetServerURL>http://itsolution.ddns.net:1822/reportserver</TargetServerURL>
+    <TargetServerURL>http://itsolution2.ddns.net:1822/reportserver</TargetServerURL>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'DebugLocal' ">
     <FullPath>DebugLocal</FullPath>
@@ -53,6 +53,7 @@
     <DataSet Include="Entete.rsd" />
     <DataSet Include="Ligne.rsd" />
     <DataSet Include="montantLettre.rsd" />
+    <DataSet Include="P_Communication.rsd" />
     <DataSet Include="P_Dossier.rsd" />
     <DataSet Include="Reglement.rsd" />
     <DataSet Include="ResteAPayer.rsd" />

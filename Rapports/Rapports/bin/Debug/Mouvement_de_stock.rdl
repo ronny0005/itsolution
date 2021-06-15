@@ -37,121 +37,154 @@
             <Value>=Parameters!PROT_No.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>DECLARE @depot as int
-DECLARE @dateDebut as date
-DECLARE @dateFin as date
-DECLARE @articleDebut as varchar(30)
-DECLARE @articleFin as varchar(30)
-DECLARE @rupture as tinyint
+        <CommandText>	DECLARE @depot as int
+	DECLARE @dateDebut as date
+	DECLARE @dateFin as date
+	DECLARE @articleDebut as varchar(30)
+	DECLARE @articleFin as varchar(30)
+	DECLARE @rupture as tinyint
 
-SET @depot = @depotP
-SET @dateDebut =@dateDebutP
-SET @dateFin =@dateFinP
-SET @articleDebut =@articleDebutP
-SET @articleFin =@articleFinP
-SET @rupture =@ruptureP
-BEGIN 
+	SET @depot = @depotP
+	SET @dateDebut =@dateDebutP
+	SET @dateFin =@dateFinP
+	SET @articleDebut =@articleDebutP
+	SET @articleFin =@articleFinP
+	SET @rupture =@ruptureP
+	BEGIN 
 
-CREATE TABLE #TMPDEPOT (DE_No INT)
-DECLARE @admin INT
-DECLARE @ProtNo INT
-SET @ProtNo = @PROT_NoP
+	CREATE TABLE #TMPDEPOT (DE_No INT)
+	DECLARE @admin INT
+	DECLARE @ProtNo INT
+	SET @ProtNo = @PROT_NoP
 
 
-SELECT @admin = CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No = @ProtNo 
+	SELECT @admin = CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No = @ProtNo 
                     
-IF (@admin=0)
-BEGIN 
-	INSERT INTO #TMPDEPOT
-    SELECT	A.DE_No 
-    FROM	F_DEPOT A
-    LEFT JOIN Z_DEPOTUSER D ON A.DE_No=D.DE_No
-    WHERE	(1 = (SELECT CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No=@ProtNo) OR D.PROT_No =@ProtNo)
-    AND IsPrincipal = 1
-    GROUP BY A.DE_No
-END
-ELSE 
-BEGIN
-	INSERT	INTO #TMPDEPOT 
-    SELECT DE_No 
-    FROM F_DEPOT 
-END 
+	IF (@admin=0)
+	BEGIN 
+		INSERT INTO #TMPDEPOT
+		SELECT	A.DE_No 
+		FROM	F_DEPOT A
+		LEFT JOIN Z_DEPOTUSER D ON A.DE_No=D.DE_No
+		WHERE	(1 = (SELECT CASE WHEN PROT_Administrator=1 OR PROT_Right=1 THEN 1 ELSE 0 END FROM F_PROTECTIONCIAL WHERE PROT_No=@ProtNo) OR D.PROT_No =@ProtNo)
+		AND IsPrincipal = 1
+		GROUP BY A.DE_No
+	END
+	ELSE 
+	BEGIN
+		INSERT	INTO #TMPDEPOT 
+		SELECT DE_No 
+		FROM F_DEPOT 
+	END 
 
-     SELECT *,CASE WHEN DL_Qte&lt;0 THEN 1 ELSE 0 END Sens INTO #TMP
-                    FROM (
-                    SELECT  
-					CASE WHEN @rupture = 1 THEN DE.DE_No ELSE 0 END DE_No
-					,CASE WHEN @rupture = 1 THEN DE.DE_Intitule ELSE '' END DE_Intitule				
-					,0 AS ligne,0 AS cbMarq,'1960-01-01' DO_Date,AR.AR_Ref,AR.cbAR_Ref,AR_Design,'' DO_Piece,'' CT_Num,'Report de stock' AS CT_Intitule
-                    ,SUM(CASE WHEN DL_MvtStock=3 THEN -1 ELSE 1 END * ABS(DL_Qte))DL_Qte,0 DO_Type,0 DO_Domaine,0 DL_MvtStock,0 AR_PrixAch,0 DL_PrixRU
-					,SUM(CASE WHEN DL_MvtStock=3 THEN -DL_PrixRU*ABS(DL_Qte) ELSE DL_PrixRU*ABS(DL_Qte) END) cumul
-                    FROM F_DOCENTETE E
-                    INNER JOIN F_DOCLIGNE D 
-						ON	D.DO_Domaine = E.DO_Domaine 
-						AND D.DO_Type = E.DO_Type 
-						AND E.cbDO_Piece = D.cbDO_Piece
-                    INNER JOIN F_ARTICLE AR 
-						ON AR.cbAR_Ref=D.cbAR_Ref
-                    INNER JOIN F_DEPOT DE 
-						ON DE.DE_No=D.DE_No
-                    WHERE ((@depot='0' AND D.DE_No IN (SELECT DE_No FROM #TMPDEPOT)) OR D.DE_No = @depot) 
-                    AND DL_MvtStock&lt;&gt;0
-                    AND D.DO_Date &lt; @dateDebut
-                    AND ('0' =@articleDebut OR AR.cbAR_Ref&gt;=@articleDebut)
-                    AND ('0' =@articleFin OR AR.cbAR_Ref&lt;= @articleFin)
-                    GROUP BY CASE WHEN @rupture = 1 THEN DE.DE_No ELSE 0 END 
-					,CASE WHEN @rupture = 1 THEN DE.DE_Intitule ELSE '' END 
-					,AR.AR_Ref,AR.cbAR_Ref,AR_Design
-                    union
-                    SELECT  CASE WHEN @rupture = 1 THEN DE.DE_No ELSE 0 END DE_No
-					,CASE WHEN @rupture = 1 THEN DE.DE_Intitule ELSE '' END DE_Intitule
-					,ROW_NUMBER() OVER(PARTITION BY AR.AR_Ref order by E.DO_Date,DL_MvtStock,D.cbMarq) AS ligne
-					,D.cbMarq,D.DO_Date,AR.AR_Ref,AR.cbAR_Ref,AR_Design,D.DO_Piece
-					,CASE WHEN T.CT_Num IS NULL THEN DT.DE_No ELSE T.CT_Num END CT_Num
-					,CASE WHEN CT_Intitule IS NULL THEN DT.DE_Intitule ELSE CT_Intitule END CT_Intitule
-					,CASE WHEN DL_MvtStock=3 THEN -1 ELSE 1 END * ABS(DL_Qte),D.DO_Type,D.DO_Domaine,DL_MvtStock,AR_PrixAch,DL_PrixRU
-					,CASE WHEN DL_MvtStock=3 THEN -(DL_PrixRU*ABS(DL_Qte)) ELSE (DL_PrixRU*ABS(DL_Qte)) END cumul
-                    FROM F_DOCENTETE E
-                    INNER JOIN F_DOCLIGNE D 
-						ON	D.DO_Domaine = E.DO_Domaine 
-						AND D.DO_Type = E.DO_Type 
-						AND E.cbDO_Piece = D.cbDO_Piece
-                    INNER JOIN F_ARTICLE AR 
-						ON	AR.cbAR_Ref=D.cbAR_Ref
-                    LEFT JOIN F_COMPTET T 
-						ON T.cbCT_Num = D.cbCT_Num
-                    INNER JOIN F_DEPOT DE 
-						ON DE.DE_No=D.DE_No
-                    LEFT JOIN (SELECT CAST(DE_No AS VARCHAR(50)) DE_No,DE_Intitule FROM F_DEPOT) DT 
-						ON DT.DE_No = D.CT_Num
-                    WHERE ((@depot ='0' AND D.DE_No IN (SELECT DE_No FROM #TMPDEPOT)) OR D.DE_No = @depot) 
-                    AND DL_MvtStock&lt;&gt;0
-                    AND ('0' = @articleDebut OR AR.cbAR_Ref&gt;=@articleDebut)
-                    AND ('0' =@articleFin OR AR.cbAR_Ref&lt;=@articleFin)
-                    AND D.DO_Date &gt;= @dateDebut AND D.DO_Date &lt;= @dateFin)A;
+		 SELECT *,CASE WHEN DL_Qte&lt;0 THEN 1 ELSE 0 END Sens INTO #TMP
+						FROM (
+						SELECT  
+						DE_No = CASE WHEN @rupture = 1 THEN DE.DE_No ELSE 0 END 
+						,DE_Intitule = CASE WHEN @rupture = 1 THEN DE.DE_Intitule ELSE '' END 				
+						,ligne = 0
+						,cbMarq = 0
+						,DO_Date = '1960-01-01'
+						,AR.AR_Ref
+						,AR.cbAR_Ref,AR_Design
+						,DO_Piece = '' 
+						,CT_Num = ''
+						,CT_Intitule ='Report de stock'
+						,DL_Qte = SUM(CASE WHEN DL_MvtStock=3 THEN -1 ELSE 1 END * ABS(DL_Qte))
+						/*,DL_QteLivree = SUM(CASE WHEN DL_MvtStock=3 THEN -1 ELSE 1 END * ABS(zdl.DL_QteBL))*/
+						,DO_Type = 0
+						,DO_Domaine = 0 
+						,DL_MvtStock = 0
+						,AR_PrixAch = 0
+						,DL_PrixRU = 0 
+						,cumul = SUM(CASE WHEN DL_MvtStock=3 THEN -DL_PrixRU*ABS(DL_Qte) ELSE DL_PrixRU*ABS(DL_Qte) END) 
+						FROM F_DOCENTETE E
+						INNER JOIN F_DOCLIGNE D 
+							ON	D.DO_Domaine = E.DO_Domaine 
+							AND D.DO_Type = E.DO_Type 
+							AND E.cbDO_Piece = D.cbDO_Piece
+						/*LEFT JOIN (	SELECT	cbMarqLigne, DL_QteBL = SUM(DL_QteBL) 
+									FROM	Z_DocligneLivree 
+									GROUP BY cbMarqLigne) zdl
+							ON	zdl.cbMarqLigne = d.cbMarq*/
+						INNER JOIN F_ARTICLE AR 
+							ON AR.cbAR_Ref=D.cbAR_Ref
+						INNER JOIN F_DEPOT DE 
+							ON DE.DE_No=D.DE_No
+						WHERE ((@depot='0' AND D.DE_No IN (SELECT DE_No FROM #TMPDEPOT)) OR D.DE_No = @depot) 
+						AND DL_MvtStock&lt;&gt;0
+						AND D.DO_Date &lt; @dateDebut
+						AND ('0' =@articleDebut OR AR.cbAR_Ref&gt;=@articleDebut)
+						AND ('0' =@articleFin OR AR.cbAR_Ref&lt;= @articleFin)
+						GROUP BY CASE WHEN @rupture = 1 THEN DE.DE_No ELSE 0 END 
+						,CASE WHEN @rupture = 1 THEN DE.DE_Intitule ELSE '' END 
+						,AR.AR_Ref,AR.cbAR_Ref,AR_Design
+						union
+						SELECT  CASE WHEN @rupture = 1 THEN DE.DE_No ELSE 0 END DE_No
+						,CASE WHEN @rupture = 1 THEN DE.DE_Intitule ELSE '' END DE_Intitule
+						,ROW_NUMBER() OVER(PARTITION BY AR.AR_Ref order by E.DO_Date,DL_MvtStock,D.cbMarq) AS ligne
+						,D.cbMarq,D.DO_Date,AR.AR_Ref,AR.cbAR_Ref,AR_Design,D.DO_Piece
+						,CASE WHEN T.CT_Num IS NULL THEN DT.DE_No ELSE T.CT_Num END CT_Num
+						,CASE WHEN CT_Intitule IS NULL THEN DT.DE_Intitule ELSE CT_Intitule END CT_Intitule
+						,CASE WHEN DL_MvtStock=3 THEN -1 ELSE 1 END * ABS(DL_Qte)
+						/*,CASE WHEN DL_MvtStock=3 THEN -1 ELSE 1 END * ABS(zdl.DL_QteBL)*/
+						,D.DO_Type
+						,D.DO_Domaine,DL_MvtStock,AR_PrixAch,DL_PrixRU
+						,CASE WHEN DL_MvtStock=3 THEN -(DL_PrixRU*ABS(DL_Qte)) ELSE (DL_PrixRU*ABS(DL_Qte)) END cumul
+						FROM F_DOCENTETE E
+						INNER JOIN F_DOCLIGNE D 
+							ON	D.DO_Domaine = E.DO_Domaine 
+							AND D.DO_Type = E.DO_Type 
+							AND E.cbDO_Piece = D.cbDO_Piece
+						/*LEFT JOIN (	SELECT	cbMarqLigne, DL_QteBL = SUM(DL_QteBL) 
+									FROM	Z_DocligneLivree 
+									GROUP BY cbMarqLigne) zdl
+							ON	zdl.cbMarqLigne = d.cbMarq*/
+						INNER JOIN F_ARTICLE AR 
+							ON	AR.cbAR_Ref=D.cbAR_Ref
+						LEFT JOIN F_COMPTET T 
+							ON T.cbCT_Num = D.cbCT_Num
+						INNER JOIN F_DEPOT DE 
+							ON DE.DE_No=D.DE_No
+						LEFT JOIN (SELECT CAST(DE_No AS VARCHAR(50)) DE_No,DE_Intitule FROM F_DEPOT) DT 
+							ON DT.DE_No = D.CT_Num
+						WHERE ((@depot ='0' AND D.DE_No IN (SELECT DE_No FROM #TMPDEPOT)) OR D.DE_No = @depot) 
+						AND DL_MvtStock&lt;&gt;0
+						AND ('0' = @articleDebut OR AR.cbAR_Ref&gt;=@articleDebut)
+						AND ('0' =@articleFin OR AR.cbAR_Ref&lt;=@articleFin)
+						AND D.DO_Date &gt;= @dateDebut AND D.DO_Date &lt;= @dateFin)A;
 
-SELECT *
-        FROM(
-            SELECT T1.ligne,T1.Sens,T1.DE_No,T1.DE_Intitule,CAST(T1.DO_Date as Date) DO_Date,T1.AR_Ref,T1.DO_Piece,T1.AR_Design,T1.CT_Num,T1.CT_Intitule,T1.DL_Qte,T1.DO_Type,T1.DO_Domaine,T1.DL_MvtStock,T1.AR_PrixAch,T1.DL_PrixRU,SUM(T2.DL_Qte) as cumul,SUM(T2.cumul) as cumul_PRIX,T1.cbMarq
-                        FROM #TMP T1
-                        INNER JOIN #TMP T2 
-							ON	T1.ligne&gt;=T2.ligne 
-							AND T1.cbAR_Ref=T2.cbAR_Ref 
-							AND T1.DE_No=T2.DE_No
-                        GROUP BY T1.ligne,T1.Sens,T1.DE_No,T1.DE_Intitule,T1.cbMarq,T1.DO_Date,T1.AR_Ref,T1.DO_Piece,T1.AR_Design,T1.CT_Num,T1.CT_Intitule,T1.DL_Qte,T1.DO_Type,T1.DO_Domaine,T1.DL_MvtStock,T1.AR_PrixAch,T1.DL_PrixRU,T1.cbMarq)A
-                        WHERE NOT EXISTS (
-            SELECT 1
-                        FROM(
-                            SELECT T1.ligne,CAST(T1.DO_Date as Date) DO_Date,T1.AR_Ref,T1.DO_Piece,T1.AR_Design,T1.CT_Num,T1.CT_Intitule,T1.DL_Qte,T1.DO_Type,T1.DO_Domaine,T1.DL_MvtStock,T1.AR_PrixAch,T1.DL_PrixRU,SUM(T2.DL_Qte) as cumul,SUM(T2.cumul) as cumul_PRIX,T1.cbMarq
-                        FROM #TMP  T1
-                        INNER JOIN #TMP  T2 
-							ON	T1.ligne&gt;=T2.ligne 
-							AND T1.cbAR_Ref=T2.cbAR_Ref 
-							AND T1.DE_No=T2.DE_No
-                        GROUP BY T1.ligne,T1.cbMarq,T1.DO_Date,T1.AR_Ref,T1.DO_Piece,T1.AR_Design,T1.CT_Num,T1.CT_Intitule,T1.DL_Qte,T1.DO_Type,T1.DO_Domaine,T1.DL_MvtStock,T1.AR_PrixAch,T1.DL_PrixRU,T1.cbMarq)B
-                        WHERE DL_Qte=0 AND YEAR(DO_Date)=1960 AND A.AR_Design=B.AR_Design AND A.DO_Date=B.DO_Date AND A.DL_Qte=B.DL_Qte)
-                        ORDER BY AR_Ref,DO_Date,Sens,cbMarq;
-END</CommandText>
+	SELECT *
+			FROM(
+				SELECT T1.ligne,T1.Sens,T1.DE_No,T1.DE_Intitule,DO_Date = CAST(T1.DO_Date as Date) 
+						,T1.AR_Ref,T1.DO_Piece,T1.AR_Design,T1.CT_Num,T1.CT_Intitule
+						,T1.DL_Qte/*,T1.DL_QteLivree*/,T1.DO_Type,T1.DO_Domaine,T1.DL_MvtStock
+						,T1.AR_PrixAch,T1.DL_PrixRU
+						,cumul = SUM(T2.DL_Qte)
+						/*,cumulQteLivree = SUM(T2.DL_QteLivree)*/
+						,cumul_PRIX = SUM(T2.cumul),T1.cbMarq
+							FROM #TMP T1
+							INNER JOIN #TMP T2 
+								ON	T1.ligne&gt;=T2.ligne 
+								AND T1.cbAR_Ref=T2.cbAR_Ref 
+								AND T1.DE_No=T2.DE_No
+							GROUP BY T1.ligne,T1.Sens,T1.DE_No,T1.DE_Intitule,T1.cbMarq,T1.DO_Date,T1.AR_Ref
+							,T1.DO_Piece,T1.AR_Design,T1.CT_Num,T1.CT_Intitule,T1.DL_Qte/*,T1.DL_QteLivree*/,T1.DO_Type,T1.DO_Domaine
+							,T1.DL_MvtStock,T1.AR_PrixAch,T1.DL_PrixRU,T1.cbMarq
+					)A
+							WHERE NOT EXISTS (
+				SELECT 1
+							FROM(
+								SELECT T1.ligne,CAST(T1.DO_Date as Date) DO_Date,T1.AR_Ref,T1.DO_Piece,T1.AR_Design,T1.CT_Num,T1.CT_Intitule,T1.DL_Qte,T1.DO_Type,T1.DO_Domaine,T1.DL_MvtStock,T1.AR_PrixAch,T1.DL_PrixRU,SUM(T2.DL_Qte) as cumul,SUM(T2.cumul) as cumul_PRIX,T1.cbMarq
+							FROM #TMP  T1
+							INNER JOIN #TMP  T2 
+								ON	T1.ligne&gt;=T2.ligne 
+								AND T1.cbAR_Ref=T2.cbAR_Ref 
+								AND T1.DE_No=T2.DE_No
+							GROUP BY T1.ligne,T1.cbMarq,T1.DO_Date,T1.AR_Ref,T1.DO_Piece,T1.AR_Design,T1.CT_Num,T1.CT_Intitule,T1.DL_Qte,T1.DO_Type,T1.DO_Domaine,T1.DL_MvtStock,T1.AR_PrixAch,T1.DL_PrixRU,T1.cbMarq)B
+							WHERE DL_Qte=0 AND YEAR(DO_Date)=1960 AND A.AR_Design=B.AR_Design AND A.DO_Date=B.DO_Date AND A.DL_Qte=B.DL_Qte)
+							ORDER BY AR_Ref,DO_Date,Sens,cbMarq;
+	END</CommandText>
       </Query>
       <Fields>
         <Field Name="ligne">
@@ -252,19 +285,19 @@ END</CommandText>
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>2.18066cm</Width>
+                  <Width>1.36654cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.89503cm</Width>
+                  <Width>2.22746cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>5.11688cm</Width>
+                  <Width>6.99545cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.4123cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.52462cm</Width>
+                  <Width>2.12775cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.2865cm</Width>
@@ -1953,7 +1986,7 @@ END</CommandText>
             </TablixRowHierarchy>
             <DataSetName>Requete</DataSetName>
             <Height>1.91667in</Height>
-            <Width>20.00002cm</Width>
+            <Width>20.00003cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1961,10 +1994,10 @@ END</CommandText>
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>4.86834cm</Height>
+        <Height>4.86835cm</Height>
         <Style />
       </Body>
-      <Width>20.00002cm</Width>
+      <Width>20.00003cm</Width>
       <Page>
         <PageHeader>
           <Height>2.90441cm</Height>

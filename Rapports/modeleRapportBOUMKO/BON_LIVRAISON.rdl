@@ -60,6 +60,10 @@
           <DataField>DE_Complement</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="DO_Domaine">
+          <DataField>DO_Domaine</DataField>
+          <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
         <Field Name="DE_CodePostal">
           <DataField>DE_CodePostal</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -74,6 +78,14 @@
         </Field>
         <Field Name="DE_Adresse">
           <DataField>DE_Adresse</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DO_Type">
+          <DataField>DO_Type</DataField>
+          <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
+        <Field Name="Vendeur">
+          <DataField>Vendeur</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="DO_Coord04">
@@ -527,7 +539,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=iif(Parameters!facture.Value = 1, "Facture de vente ", Fields!NomFacture.Value)</Value>
+                                  <Value>Bon de livraison</Value>
                                   <Style>
                                     <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -632,7 +644,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!vendeur.Value</Value>
+                                  <Value>=Fields!Vendeur.Value</Value>
                                   <Style>
                                     <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -779,8 +791,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Entete</DataSetName>
-            <Top>0.13549in</Top>
-            <Left>7.22693cm</Left>
+            <Left>7.24466cm</Left>
             <Height>1.11556cm</Height>
             <Width>11.21204cm</Width>
             <Style>
@@ -962,7 +973,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Entete</DataSetName>
-            <Top>0.13002in</Top>
+            <Left>0.01773cm</Left>
             <Height>1.2cm</Height>
             <Width>6.67949cm</Width>
             <ZIndex>1</ZIndex>
@@ -982,7 +993,7 @@
                   <Width>3.47934cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.09944cm</Width>
+                  <Width>3.94111cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.5148cm</Width>
@@ -994,7 +1005,7 @@
                   <Width>2.57938cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.34168cm</Width>
+                  <Width>2.5cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1012,7 +1023,7 @@
                                 <TextRun>
                                   <Value>Référence</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1067,7 +1078,7 @@
                                 <TextRun>
                                   <Value>Désignation</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1124,7 +1135,7 @@
                                 <TextRun>
                                   <Value>Qté</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1179,7 +1190,7 @@
                                 <TextRun>
                                   <Value>P.U.</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1234,7 +1245,7 @@
                                 <TextRun>
                                   <Value>Montant</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1289,7 +1300,7 @@
                                 <TextRun>
                                   <Value>Depot</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1349,7 +1360,7 @@
                                 <TextRun>
                                   <Value>=Fields!AR_Ref.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1401,7 +1412,7 @@
                                 <TextRun>
                                   <Value>=Fields!DL_Design.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1455,7 +1466,7 @@
                                 <TextRun>
                                   <Value>=Fields!DL_Qte.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1510,7 +1521,7 @@
                                 <TextRun>
                                   <Value>=Fields!DL_PUTTC_Rem0.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1563,7 +1574,7 @@
                                 <TextRun>
                                   <Value>=Fields!DL_MontantTTC.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1618,7 +1629,7 @@
                                 <TextRun>
                                   <Value>=Fields!DE_Contact.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1659,7 +1670,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1678,7 +1688,7 @@
                                 <TextRun>
                                   <Value>Total</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1736,7 +1746,7 @@
                                 <TextRun>
                                   <Value>=Sum(Fields!DL_MontantTTC.Value)</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -1782,7 +1792,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox16">
+                        <Textbox Name="Textbox10">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1791,7 +1801,7 @@
                                 <TextRun>
                                   <Value />
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1801,7 +1811,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox16</rd:DefaultName>
+                          <rd:DefaultName>Textbox10</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1863,9 +1873,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Ligne</DataSetName>
-            <Top>1.6361cm</Top>
+            <Top>1.3186cm</Top>
+            <Left>0.01773cm</Left>
             <Height>1.69417cm</Height>
-            <Width>18.43897cm</Width>
+            <Width>18.43896cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -1904,7 +1915,7 @@
                                 <TextRun>
                                   <Value>Date</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -1959,7 +1970,7 @@
                                 <TextRun>
                                   <Value>Libellé</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2014,7 +2025,7 @@
                                 <TextRun>
                                   <Value>Montant</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2069,7 +2080,7 @@
                                 <TextRun>
                                   <Value>Solde progressif</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2129,7 +2140,7 @@
                                 <TextRun>
                                   <Value>=iif(Fields!RG_Libelle.Value = "SOLDE INITIAL", Nothing, FormatDateTime(Fields!RG_Date.Value, Microsoft.VisualBasic.DateFormat.ShortDate))</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2183,7 +2194,7 @@
                                 <TextRun>
                                   <Value>=Fields!RG_Libelle.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2235,7 +2246,7 @@
                                 <TextRun>
                                   <Value>=Fields!RG_Montant.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -2290,7 +2301,7 @@
                                 <TextRun>
                                   <Value>=Fields!CUMUL.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>N</Format>
                                   </Style>
@@ -2357,7 +2368,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Reglement</DataSetName>
-            <Top>1.3528in</Top>
+            <Top>1.2278in</Top>
+            <Left>0.01773cm</Left>
             <Height>0.41666in</Height>
             <Width>5.02543in</Width>
             <ZIndex>3</ZIndex>
@@ -2396,7 +2408,7 @@
                   <TextRun>
                     <Value>N.B. : Les marchandises non livrées dans un délais de 30 jours seront soumis aux frais de stockage de 100 FCFA/jour et par article</Value>
                     <Style>
-                      <FontFamily>Calibri</FontFamily>
+                      <FontFamily>calibri</FontFamily>
                       <FontSize>8pt</FontSize>
                     </Style>
                   </TextRun>
@@ -2405,10 +2417,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>5.2833cm</Top>
-            <Left>0.01575in</Left>
+            <Top>4.9658cm</Top>
+            <Left>0.02273in</Left>
             <Height>0.53296cm</Height>
-            <Width>18.47897cm</Width>
+            <Width>18.39896cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -2427,7 +2439,7 @@
                   <Width>6.66176cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>11.90675cm</Width>
+                  <Width>11.77721cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -2445,7 +2457,7 @@
                                 <TextRun>
                                   <Value>Arrêter la présente facture à la somme de :</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2480,7 +2492,7 @@
                                 <TextRun>
                                   <Value>=First(Fields!MontantLettre.Value, "MontantLettre")</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>calibri</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -2520,9 +2532,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Ligne</DataSetName>
-            <Top>4.5297cm</Top>
+            <Top>4.2122cm</Top>
+            <Left>0.01773cm</Left>
             <Height>0.6cm</Height>
-            <Width>18.56851cm</Width>
+            <Width>18.43897cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
               <Border>
@@ -2531,169 +2544,196 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>5.81626cm</Height>
+        <Height>5.49876cm</Height>
         <Style />
       </Body>
-      <Width>527.48533pt</Width>
+      <Width>523.18205pt</Width>
       <Page>
         <PageHeader>
-          <Height>3.21361cm</Height>
+          <Height>2.93139cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
-            <Rectangle Name="Rectangle2">
-              <ReportItems>
-                <Textbox Name="Textbox7">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!CT_Intitule.Value, "Entete")</Value>
-                          <Style>
-                            <FontFamily>calibri</FontFamily>
-                            <FontSize>9pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style />
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox5</rd:DefaultName>
-                  <Height>15pt</Height>
-                  <Width>7.75297cm</Width>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox8">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>="Tel : " + First(Fields!CT_Telephone.Value, "DonneeClient") + Microsoft.VisualBasic.Constants.vbcrlf + "BP :" + First(Fields!CT_CodePostal.Value, "DonneeClient") + Microsoft.VisualBasic.Constants.vbcrlf + "NIU: " + First(Fields!CT_Identifiant.Value, "DonneeClient") + Microsoft.VisualBasic.Constants.vbcrlf + "RCCM : " + First(Fields!CT_Complement.Value, "DonneeClient") + Microsoft.VisualBasic.Constants.vbcrlf + First(Fields!DO_Coord04.Value, "Entete")</Value>
-                          <Style>
-                            <FontFamily>calibri</FontFamily>
-                            <FontSize>9pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style />
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox6</rd:DefaultName>
-                  <Top>17pt</Top>
-                  <Height>0.6cm</Height>
-                  <Width>7.71297cm</Width>
-                  <ZIndex>1</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-              </ReportItems>
+            <Textbox Name="Textbox2">
+              <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
-              <Left>10.85554cm</Left>
-              <Height>1.19972cm</Height>
-              <Width>7.75297cm</Width>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Label>DE_Complement</Label>
+                      <Value>=First(Fields!DE_Complement.Value, "Entete")</Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Label>DE_Telephone</Label>
+                      <Value>=First(Fields!DE_Telephone.Value, "Entete")</Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox1</rd:DefaultName>
+              <Height>83.09446pt</Height>
+              <Width>6.67949cm</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
                 </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
               </Style>
-            </Rectangle>
-            <Rectangle Name="Rectangle1">
-              <ReportItems>
-                <Textbox Name="Textbox2">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Label>P_Dossier</Label>
-                          <Value>=First(Fields!D_RaisonSoc.Value, "P_Dossier")</Value>
-                          <Style>
-                            <FontFamily>calibri</FontFamily>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style />
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox1</rd:DefaultName>
-                  <Height>15pt</Height>
-                  <Width>6.67949cm</Width>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox15">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=iif(First(Fields!D_Siret.Value, "P_Dossier")  =nothing,"",First(Fields!D_Siret.Value, "P_Dossier")+Microsoft.VisualBasic.Constants.vbcrlf)+First(Fields!D_Identifiant.Value, "P_Dossier")+Microsoft.VisualBasic.Constants.vbcrlf+First(Fields!D_Adresse.Value, "P_Dossier")+ Microsoft.VisualBasic.Constants.vbcrlf+First(Fields!D_Complement.Value, "P_Dossier")+Microsoft.VisualBasic.Constants.vbcrlf+"Agence :"+First(Fields!DE_Intitule.Value, "Entete")+Microsoft.VisualBasic.Constants.vbcrlf + "Téléphone :"+First(Fields!DE_Telephone.Value, "Entete")</Value>
-                          <Style>
-                            <FontFamily>calibri</FontFamily>
-                            <FontSize>9pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style />
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox15</rd:DefaultName>
-                  <Top>0.49389cm</Top>
-                  <Height>2.71972cm</Height>
-                  <Width>6.67949cm</Width>
-                  <ZIndex>1</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-              </ReportItems>
+            </Textbox>
+            <Textbox Name="Textbox7">
+              <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
-              <Left>0.01575in</Left>
-              <Height>3.21361cm</Height>
-              <Width>6.67949cm</Width>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!CT_Intitule.Value, "Entete")</Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Tél : </Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Label>CT_Telephone</Label>
+                      <Value>=First(Fields!CT_Telephone.Value, "DonneeClient")</Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>BP : </Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Label>CT_CodePostal</Label>
+                      <Value>=First(Fields!CT_CodePostal.Value, "DonneeClient")</Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>NIU :  </Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Label>CT_Identifiant</Label>
+                      <Value>=First(Fields!CT_Identifiant.Value, "DonneeClient")</Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>RCCM : </Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Label>CT_Complement</Label>
+                      <Value>=First(Fields!CT_Complement.Value, "DonneeClient")</Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Label>DO_Coord04</Label>
+                      <Value>=First(Fields!DO_Coord04.Value, "Entete")</Value>
+                      <Style>
+                        <FontFamily>calibri</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox5</rd:DefaultName>
+              <Left>10.87327cm</Left>
+              <Height>71.09443pt</Height>
+              <Width>7.58343cm</Width>
               <ZIndex>1</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
                 </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
               </Style>
-            </Rectangle>
+            </Textbox>
           </ReportItems>
           <Style>
             <Border>
@@ -2701,7 +2741,7 @@
             </Border>
           </Style>
         </PageHeader>
-        <PageHeight>29.7cm</PageHeight>
+        <PageHeight>14.8cm</PageHeight>
         <PageWidth>21cm</PageWidth>
         <LeftMargin>0.5cm</LeftMargin>
         <RightMargin>0.5cm</RightMargin>
@@ -2727,7 +2767,7 @@
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>35341</Value>
+          <Value>162548</Value>
         </Values>
       </DefaultValue>
       <Prompt>cbMarq</Prompt>

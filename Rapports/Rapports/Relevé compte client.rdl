@@ -36,31 +36,75 @@ set @dt_fin=@dt_finP
 set @ct_num=@ClientP;
 set @depot=@depotP;
 
-with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumul) 
-                    as(
-                    SELECT ROW_NUMBER() OVER(order by DO_DATE) AS ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumul
-                    FROM(select '1960-01-01' AS DO_DATE,'1960-01-01' AS DR_DATE, 0 AS RETARD,'' AS DO_PIECE,'' AS DO_REF,0 AS NET_VERSER,0 AS REGLEMENT,ISNULL(MAX(RG_Montant),0) - ISNULL(SUM(RC_MONTANT),0) as cumul
-                    from F_CREGLEMENT C
-                    LEFT JOIN F_REGLECH r ON C.RG_No = R.RG_No
-                    WHERE C.RG_Date &lt;@dt_deb
-                    AND CT_NumPayeur=@ct_num
-                    UNION
-                    SELECT D.DO_Date, R.DR_Date,DATEDIFF(DAY,GETDATE(),R.DR_Date) as RETARD, D.DO_Piece,D.DO_Ref , SUM(L.DL_MontantTTC) AS  NET_VERSER,SUM(C.RC_Montant) AS REGLEMENT, SUM(L.DL_MontantTTC)-ISNULL(SUM(C.RC_Montant),0) AS CUMUL 
-                    FROM F_DOCENTETE D
-                    INNER JOIN F_DOCREGL R ON R.DO_Piece = D.DO_Piece
-                    INNER JOIN (SELECT DO_Piece,SUM(DL_MontantTTC) AS DL_MontantTTC FROM F_DOCLIGNE GROUP BY DO_Piece) L ON L.DO_Piece = D.DO_Piece
-                    LEFT JOIN F_REGLECH C ON C.DO_Piece = D.DO_Piece
-                    WHERE D.DO_Date BETWEEN @dt_deb and @dt_fin
-                    AND DO_Tiers=@ct_num
-                    AND (0=@depot OR D.DE_No=@depot)
-                    GROUP BY D.DO_Piece,D.DO_Date, R.DR_Date,DATEDIFF(DAY,GETDATE(),R.DR_Date),D.DO_Ref) A
-                    )
+with _docLigne_ AS (
+SELECT	DO_Piece
+		,DO_Domaine
+		,DO_Type
+		,DL_MontantTTC = SUM(DL_MontantTTC) 
+FROM	F_DOCLIGNE 
+GROUP BY DO_Piece
+		,DO_Domaine
+		,DO_Type
+)
+,_Reglement_ AS (
+select	DO_DATE = NULL
+		,DR_DATE = NULL
+		,RETARD = 0,DO_PIECE = '' ,DO_REF = '',NET_VERSER = 0,REGLEMENT = 0
+		,cumul = ISNULL(MAX(RG_Montant),0) - ISNULL(SUM(RC_MONTANT),0)
+from F_CREGLEMENT C
+LEFT JOIN F_REGLECH r ON C.RG_No = R.RG_No
+WHERE C.RG_Date &lt;@dt_deb
+AND CT_NumPayeur=@ct_num
+)
+,_DocEntete_ AS (
+SELECT	D.DO_Date, R.DR_Date
+		,RETARD = DATEDIFF(DAY,GETDATE(),R.DR_Date)
+		,D.DO_Piece,D.DO_Ref 
+		,NET_VERSER = SUM(L.DL_MontantTTC)
+		,REGLEMENT = SUM(C.RC_Montant)
+		,CUMUL = SUM(L.DL_MontantTTC)-ISNULL(SUM(C.RC_Montant),0)
+FROM	F_DOCENTETE D
+INNER JOIN F_DOCREGL R 
+	ON	R.DO_Piece = D.DO_Piece
+	AND	R.DO_Domaine = D.DO_Domaine
+	AND	R.DO_Type = D.DO_Type
+INNER JOIN _docLigne_ L 
+	ON	L.DO_Piece = D.DO_Piece
+	AND	L.DO_Domaine = D.DO_Domaine
+	AND	L.DO_Type = D.DO_Type
+LEFT JOIN F_REGLECH C ON C.DO_Piece = D.DO_Piece
+WHERE D.DO_Date BETWEEN @dt_deb and @dt_fin
+AND DO_Tiers=@ct_num
+AND (0=@depot OR D.DE_No=@depot)
+GROUP BY D.DO_Piece,D.DO_Date, R.DR_Date,DATEDIFF(DAY,GETDATE(),R.DR_Date),D.DO_Ref
+)
+,_Union_ AS (
+	SELECT *
+	FROM _Reglement_
+	UNION
+	SELECT * 
+	FROM _DocEntete_
+)
+,cte as(
+SELECT	ligne = ROW_NUMBER() OVER(order by DO_DATE)
+		,DO_DATE,DR_DATE
+		,RETARD,DO_PIECE
+		,DO_REF,NET_VERSER
+		,REGLEMENT,cumul
+FROM _Union_ A
+)
 
-                    SELECT T1.ligne,CAST(T1.DO_DATE AS DATE)DO_DATE,CAST(T1.DR_DATE AS DATE)DR_DATE,T1.RETARD,T1.DO_PIECE,T1.DO_REF,T1.NET_VERSER,T1.REGLEMENT,CASE WHEN SUM(T2.cumul) BETWEEN -5 AND 5 THEN 0 ELSE SUM(T2.cumul) END as cumul
-                    FROM CTE T1
-                    INNER JOIN CTE T2 ON T1.ligne&gt;=T2.ligne
-                    GROUP BY T1.ligne,T1.DO_DATE,T1.DR_DATE,T1.RETARD,T1.DO_PIECE,T1.DO_REF,T1.NET_VERSER,T1.REGLEMENT
-                    ORDER BY T1.ligne</CommandText>
+SELECT	T1.ligne,DO_DATE = CAST(T1.DO_DATE AS DATE)
+		,DR_DATE = CAST(T1.DR_DATE AS DATE)
+		,T1.RETARD,T1.DO_PIECE,T1.DO_REF
+		,T1.NET_VERSER,T1.REGLEMENT
+		,cumul = CASE WHEN SUM(T2.cumul) BETWEEN -5 AND 5 THEN 0 ELSE SUM(T2.cumul) END
+FROM CTE T1
+INNER JOIN CTE T2 ON T1.ligne&gt;=T2.ligne
+GROUP BY T1.ligne,T1.DO_DATE,T1.DR_DATE
+		,T1.RETARD,T1.DO_PIECE,T1.DO_REF
+		,T1.NET_VERSER,T1.REGLEMENT
+ORDER BY T1.ligne</CommandText>
       </Query>
       <Fields>
         <Field Name="ligne">
@@ -129,28 +173,28 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.79167in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.3125in</Width>
+                  <Width>0.79167in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.60417in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.875in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>2.04514in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.07292in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.0625in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.0625in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -579,7 +623,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=FormatDateTime(Fields!DO_DATE.Value,DateFormat.ShortDate)</Value>
+                                  <Value>=Iif(IsNothing(Fields!DO_DATE.Value),"",FormatDateTime(Fields!DO_DATE.Value,DateFormat.ShortDate))</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -628,7 +672,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=FormatDateTime(Fields!DR_DATE.Value, Microsoft.VisualBasic.DateFormat.ShortDate)</Value>
+                                  <Value>=Iif(IsNothing(Fields!DR_DATE.Value),"",FormatDateTime(Fields!DR_DATE.Value,DateFormat.ShortDate))</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -683,7 +727,9 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>RETARD</rd:DefaultName>
@@ -717,6 +763,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -839,7 +886,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -892,7 +939,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -945,7 +992,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1062,7 +1109,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1116,7 +1163,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1170,7 +1217,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1225,20 +1272,11 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
               <TablixMembers>
+                <TablixMember />
                 <TablixMember>
-                  <Group Name="CA_No">
-                    <GroupExpressions>
-                      <GroupExpression>=Fields!ligne.Value</GroupExpression>
-                    </GroupExpressions>
-                  </Group>
+                  <Group Name="Details" />
                   <TablixMembers>
                     <TablixMember />
-                    <TablixMember>
-                      <Group Name="Details" />
-                      <TablixMembers>
-                        <TablixMember />
-                      </TablixMembers>
-                    </TablixMember>
                   </TablixMembers>
                 </TablixMember>
                 <TablixMember />
@@ -1247,7 +1285,7 @@ with cte (ligne,DO_DATE,DR_DATE,RETARD,DO_PIECE,DO_REF,NET_VERSER,REGLEMENT,cumu
             <DataSetName>Requete</DataSetName>
             <Top>0.125in</Top>
             <Height>0.75in</Height>
-            <Width>8.3125in</Width>
+            <Width>8.30556in</Width>
             <Style>
               <Border>
                 <Style>None</Style>

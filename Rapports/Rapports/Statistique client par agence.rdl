@@ -1717,7 +1717,6 @@ ORDER BY	CT_Intitule,TotCAHTNet DESC</CommandText>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Requete</DataSetName>
-            <Left>0.30427cm</Left>
             <Height>1.60417in</Height>
             <Width>9in</Width>
             <Style>

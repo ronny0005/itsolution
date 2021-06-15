@@ -17,43 +17,48 @@ DECLARE @DoType as INT
 DECLARE @DoPiece as VARCHAR(50)
 SET @cbMarq = @cbMarqP;
 
-SELECT *,Val_Remise*100/DL_PUTTC/100 PourcRemise
+SELECT	*
+		,PourcRemise = Val_Remise * 100/DL_PUTTC/100 
 FROM (
-SELECT DL_PUDevise,lig.CA_Num,DL_TTC, DL_PUTTC,DL_MvtStock,CT_Num,lig.cbMarq,DL_TypeTaux1,DL_TypeTaux2,DL_TypeTaux3,lig.cbCreateur,DL_NoColis
-        ,CASE WHEN DL_TypeTaux1=0 THEN DL_MontantHT*(DL_Taxe1/100) 
-			WHEN DL_TypeTaux1=1 THEN DL_Taxe1*DL_Qte ELSE DL_Taxe1 END MT_Taxe1
-        ,CASE WHEN DL_TypeTaux2=0 THEN DL_MontantHT*(DL_Taxe2/100) 
-			WHEN DL_TypeTaux2=1 THEN DL_Taxe2*DL_Qte ELSE DL_Taxe2 END MT_Taxe2
-        ,CASE WHEN DL_TypeTaux3=0 THEN DL_MontantHT*(DL_Taxe3/100) 
-				WHEN DL_TypeTaux3=1 THEN DL_Taxe3*DL_Qte ELSE DL_Taxe3 END MT_Taxe3
-		,DL_MontantHT,lig.DO_Piece,
-        AR_Ref,lig.DE_No,DL_CMUP AS AR_PrixAch,DL_Design
-		,DL_Qte,DL_PrixUnitaire,DL_CMUP,DL_Taxe1,DL_Taxe2,DL_Taxe3,DL_MontantTTC,DL_Ligne,DL_Remise01REM_Valeur,DL_Remise01REM_Type,
-        CASE WHEN DL_Remise01REM_Type=0 THEN ''  
-				WHEN DL_Remise01REM_Type=1 THEN cast(cast(DL_Remise01REM_Valeur as numeric(9,2)) as varchar(10))+'%' 
-					ELSE cast(cast(DL_Remise01REM_Valeur as numeric(9,2)) as varchar(10))+'U' END DL_Remise,
-        DL_PrixUnitaire -(CASE WHEN DL_Remise01REM_Type= 0 THEN DL_PrixUnitaire
+SELECT	DL_PUDevise,lig.CA_Num,DL_TTC, DL_PUTTC,DL_MvtStock,CT_Num,lig.cbMarq
+		,DL_TypeTaux1,DL_TypeTaux2,DL_TypeTaux3,lig.cbCreateur,DL_NoColis
+        ,MT_Taxe1 = CASE WHEN DL_TypeTaux1=0 THEN DL_MontantHT*(DL_Taxe1/100) 
+			WHEN DL_TypeTaux1=1 THEN DL_Taxe1*DL_Qte ELSE DL_Taxe1 END 
+        ,MT_Taxe2 = CASE WHEN DL_TypeTaux2=0 THEN DL_MontantHT*(DL_Taxe2/100) 
+			WHEN DL_TypeTaux2=1 THEN DL_Taxe2*DL_Qte ELSE DL_Taxe2 END 
+        ,MT_Taxe3 = CASE WHEN DL_TypeTaux3=0 THEN DL_MontantHT*(DL_Taxe3/100) 
+				WHEN DL_TypeTaux3=1 THEN DL_Taxe3*DL_Qte ELSE DL_Taxe3 END 
+		,DL_MontantHT,lig.DO_Piece,DE_Contact
+		,AR_Ref,lig.DE_No,AR_PrixAch = DL_CMUP,DL_Design
+		,DL_Qte,DL_PrixUnitaire,DL_CMUP,DL_Taxe1,DL_Taxe2,DL_Taxe3
+		,DL_MontantTTC,DL_Ligne,DL_Remise01REM_Valeur,DL_Remise01REM_Type
+		,DL_Remise = CASE WHEN DL_Remise01REM_Type=0 THEN ''  
+				WHEN DL_Remise01REM_Type=1 THEN CAST(CAST(DL_Remise01REM_Valeur as numeric(9,2)) as varchar(10))+'%' 
+					ELSE CAST(CAST(DL_Remise01REM_Valeur as numeric(9,2)) as varchar(10))+'U' END ,
+        DL_PrixUnitaire_Rem = DL_PrixUnitaire -(CASE WHEN DL_Remise01REM_Type= 0 THEN DL_PrixUnitaire
 								WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
-									WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END) DL_PrixUnitaire_Rem,
-        DL_PUTTC -(CASE WHEN DL_Remise01REM_Type= 0 THEN DL_PUTTC
-	ELSE CASE WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
-		ELSE CASE WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END END END) DL_PUTTC_Rem,
-		DL_PrixUnitaire -(CASE WHEN DL_Remise01REM_Type= 0 THEN 0
-	ELSE CASE WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
-		ELSE CASE WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END END END) DL_PrixUnitaire_Rem0,
-        DL_PUTTC -(CASE WHEN DL_Remise01REM_Type= 0 THEN 0
-	ELSE CASE WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
-		ELSE CASE WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END END END) DL_PUTTC_Rem0,
-        (CASE WHEN DL_Remise01REM_Type= 0 THEN 0
-	ELSE CASE WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
-		ELSE CASE WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END END END) Val_Remise
+									WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END) ,
+        DL_PUTTC_Rem = DL_PUTTC -(CASE WHEN DL_Remise01REM_Type= 0 THEN DL_PUTTC
+										WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+										WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END) ,
+		DL_PrixUnitaire_Rem0 = DL_PrixUnitaire -(CASE WHEN DL_Remise01REM_Type= 0 THEN 0
+														WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+														WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END) ,
+        DL_PUTTC_Rem0 = DL_PUTTC -(CASE WHEN DL_Remise01REM_Type= 0 THEN 0
+										WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+										WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END) ,
+        Val_Remise = (CASE WHEN DL_Remise01REM_Type= 0 THEN 0
+				WHEN DL_Remise01REM_Type=1 THEN  DL_PrixUnitaire * DL_Remise01REM_Valeur / 100
+					WHEN DL_Remise01REM_Type=2 THEN DL_Remise01REM_Valeur ELSE 0 END) 
         FROM F_DOCENTETE docE 
 		INNER JOIN F_DOCLIGNE  lig
 			ON docE.DO_Type = lig.DO_Type
 			AND docE.DO_Domaine = lig.DO_Domaine
 			AND docE.cbDO_Piece = lig.cbDO_Piece
+		INNER JOIN F_DEPOT dep
+			ON lig.DE_No = dep.DE_No
         WHERE docE.cbMarq =@cbMarq )A
-        ORDER BY cbMarq</CommandText>
+ORDER BY cbMarq</CommandText>
     </Query>
     <Fields>
       <Field Name="DL_PUDevise">
@@ -122,6 +127,10 @@ SELECT DL_PUDevise,lig.CA_Num,DL_TTC, DL_PUTTC,DL_MvtStock,CT_Num,lig.cbMarq,DL_
       </Field>
       <Field Name="DO_Piece">
         <DataField>DO_Piece</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DE_Contact">
+        <DataField>DE_Contact</DataField>
         <rd:TypeName>System.String</rd:TypeName>
       </Field>
       <Field Name="AR_Ref">

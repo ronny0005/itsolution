@@ -106,8 +106,16 @@ SELECT	RG_TypeReg,C.CA_No,RG_Date,RG_Libelle,N_Reglement,RG_HEURE
 		,RG_Type = CASE WHEN RG_TypeReg = 2 THEN 0 ELSE RG_Type END
 		,FOND_CAISSE = CASE WHEN RG_TypeReg=2 THEN RG_MONTANT ELSE 0 END
 		,RG_MONTANT = CASE WHEN RG_TYPEREG = 4 THEN -RG_MONTANT ELSE RG_MONTANT END
-		,DEBIT = CASE WHEN (RG_Type = 0 AND RG_Montant&lt;0) OR (RG_BANQUE =3 AND RG_TypeReg=0) OR (RG_BANQUE &lt;&gt; 3 AND ((RG_Type=1 AND RG_Montant&gt;0)OR RG_TypeReg = 4))  OR RG_TypeReg = 3 OR (RG_TypeReg = 5 AND RG_Banque=1) THEN ABS(RG_Montant) ELSE 0 END 
-        ,CREDIT = CASE WHEN RG_Type = 3 OR (RG_Type = 0  AND RG_TypeReg&lt;&gt;4 AND RG_Montant&gt;=0) OR (RG_Type = 1 AND RG_Montant&lt;0) OR (RG_BANQUE =3 AND RG_TypeReg=4) OR (RG_TypeReg = 5 AND RG_Banque&lt;&gt;1) THEN ABS(RG_MONTANT) ELSE 0 END 
+		,DEBIT = CASE WHEN (RG_Type = 0 AND RG_Montant&lt;0) THEN ABS(RG_Montant) 
+		WHEN (RG_BANQUE =3 AND RG_TypeReg=0) THEN ABS(RG_Montant) 
+						WHEN (RG_BANQUE &lt;&gt; 3 AND ((RG_Type=1 AND RG_Montant&gt;0)OR RG_TypeReg = 4)) THEN ABS(RG_Montant) 
+						WHEN RG_TypeReg = 3 THEN ABS(RG_Montant) 
+						WHEN (RG_TypeReg = 5 AND RG_Banque=1) THEN ABS(RG_Montant) ELSE 0 END 
+        ,CREDIT = CASE 				WHEN RG_Type = 3 THEN ABS(RG_MONTANT) 
+						WHEN (RG_Type = 0  AND RG_TypeReg&lt;&gt;4 AND RG_Montant&gt;=0) THEN ABS(RG_MONTANT) 
+						WHEN (RG_Type = 1 AND RG_Montant&lt;0) THEN ABS(RG_MONTANT) 
+						WHEN (RG_BANQUE =3 AND RG_TypeReg=4) THEN ABS(RG_MONTANT) 
+						WHEN (RG_TypeReg = 5 AND RG_Banque&lt;&gt;1) THEN ABS(RG_MONTANT) ELSE 0 END 
 		,RG_BANQUE,CT_NUMPAYEUR,cbCT_NumPayeur,C.cbMarq
 FROM F_CREGLEMENT C
 LEFT JOIN #TMPFondCaisse T

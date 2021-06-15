@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <CommandText>SELECT CO_Regime
+FROM P_COMMUNICATION</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="CO_Regime">
+        <DataField>CO_Regime</DataField>
+        <rd:TypeName>System.Int16</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>
