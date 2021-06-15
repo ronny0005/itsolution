@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="DataSource">
-  <ConnectionProperties>
-    <Extension>SQL</Extension>
-    <ConnectString>Data Source=itsolution2.ddns.net;Initial Catalog=CMI</ConnectString>
-  </ConnectionProperties>
-  <DataSourceID>a5322acd-a034-47a3-bef0-51bca36e2b8c</DataSourceID>
-</RptDataSource>
